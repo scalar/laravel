@@ -29,7 +29,19 @@ php artisan vendor:publish --tag="scalar-views"
 
 ## Usage
 
-TODO
+You’ll need an OpenAPI/Swagger document to render your API reference with Scalar, here are two packages that help generating those documents:
+
+* [knuckleswtf/scribe](https://github.com/knuckleswtf/scribe)
+* [dedoc/scramble](https://github.com/dedoc/scramble)
+
+Once done, you can pass it to Scalar:
+
+```php
+// config/scalar.php
+return [
+    'url' => '/openapi.yaml',
+]
+```
 
 ## Testing
 
