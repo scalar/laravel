@@ -4,7 +4,6 @@ namespace Scalar\Scalar;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Scalar\Scalar\Commands\ScalarCommand;
 
 class ScalarServiceProvider extends PackageServiceProvider
 {
@@ -16,10 +15,9 @@ class ScalarServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laravel-scalar')
+            ->name('scalar')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel_scalar_table')
-            ->hasCommand(ScalarCommand::class);
+            ->hasViews('scalar')
+            ->hasRoute('web');
     }
 }
