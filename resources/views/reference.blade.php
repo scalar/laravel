@@ -142,15 +142,11 @@
 </head>
 
 <body>
-    <script id="api-reference" data-url="{{ config('scalar.url') }}"></script>
+    <script id="api-reference" data-url="{{ Scalar::url() }}"></script>
 
     <!-- Optional: You can set a full configuration object like this: -->
     <script>
-        var configuration = {!! json_encode(
-            array_merge(config('scalar.configuration'), [
-                'theme' => config('scalar.configuration.theme') === 'laravel' ? 'none' : config('scalar.configuration.theme'),
-            ]),
-        ) !!}
+        var configuration = {!! Scalar::configurationJson() !!}
 
         document.getElementById('api-reference').dataset.configuration =
             JSON.stringify(configuration)
