@@ -33,6 +33,7 @@ You’ll need an OpenAPI/Swagger document to render your API reference with Scal
 
 * [knuckleswtf/scribe](https://github.com/knuckleswtf/scribe)
 * [dedoc/scramble](https://github.com/dedoc/scramble)
+* [vyuldashev/laravel-openapi](https://github.com/vyuldashev/laravel-openapi)
 
 Once done, you can pass it to Scalar:
 

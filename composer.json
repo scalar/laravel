@@ -2,9 +2,10 @@
     "name": "scalar/laravel",
     "description": "Render your OpenAPI-based API reference",
     "keywords": [
-        "Scalar",
+        "scalar",
         "laravel",
-        "laravel-scalar"
+        "openapi",
+        "swagger"
     ],
     "homepage": "https://github.com/scalar/laravel",
     "license": "MIT",

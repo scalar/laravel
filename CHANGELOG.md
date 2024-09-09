@@ -1,3 +1,3 @@
 # Changelog
 
-All notable changes to `laravel-scalar` will be documented in this file.
+All notable changes to `scalar/laravel` will be documented in this file.
