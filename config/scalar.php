@@ -64,15 +64,16 @@ return [
         /** A string to use one of the color presets */
         'theme' =>
         // 'alternate',
-        'default',
+        // 'bluePlanet',
+        // 'deepSpace',
+        // 'default',
+        // 'kepler',
+        'laravel',
+        // 'mars',
         // 'moon',
         // 'purple',
-        // 'solarized',
-        // 'bluePlanet',
         // 'saturn',
-        // 'kepler',
-        // 'mars',
-        // 'deepSpace',
+        // 'solarized',
         // 'none',
         /** The layout to use for the references */
         'layout' => 'modern',
@@ -145,12 +146,13 @@ return [
         /**
          * List of servers to override the openapi spec servers
          */
-        'servers' => [
-            // [
-            //     'url' => 'https://api.scalar.com',
-            //     description => 'Production server',
-            // ],
-        ],
+        'servers' => null,
+        // 'servers' => [
+        //     [
+        //         'url' => 'https://api.scalar.com',
+        //         'description' => 'Production server',
+        //     ],
+        // ],
         /**
          * We’re using Inter and JetBrains Mono as the default fonts. If you want to use your own fonts, set this to false.
          */
