@@ -37,7 +37,10 @@ You’ll need an OpenAPI/Swagger document to render your API reference with Scal
 Once done, you can pass it to Scalar:
 
 ```php
+<?php
+
 // config/scalar.php
+
 return [
     'url' => '/openapi.yaml',
 ]
