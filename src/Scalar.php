@@ -9,7 +9,12 @@ class Scalar
         return config('scalar.url');
     }
 
-    public static function configurationJson()
+    public static function cdn()
+    {
+        return config('scalar.cdn', 'https://cdn.jsdelivr.net/npm/@scalar/api-reference');
+    }
+
+    public static function configuration()
     {
         /** Get the Scalar API Reference configuration */
         $configuration = config('scalar.configuration');
@@ -20,10 +25,8 @@ class Scalar
             config('scalar.configuration.theme');
 
         /** Render as JSON */
-        return json_encode(
-            array_merge($configuration, [
-                'theme' => $theme,
-            ]),
-        );
+        return collect($configuration)->merge([
+            'theme' => $theme,
+        ]);
     }
 }

@@ -52,6 +52,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Scalar CDN URL
+    |--------------------------------------------------------------------------
+    |
+    | This is the URL to the CDN where Scalar's API reference assets are hosted.
+    | By default, it points to the jsDelivr CDN for the @scalar/api-reference
+    | package. You can change this if you want to use a different CDN.
+    |
+    */
+    'cdn' => 'https://cdn.jsdelivr.net/npm/@scalar/api-reference',
+
+    /*
+    |--------------------------------------------------------------------------
     | Scalar Configuration
     |--------------------------------------------------------------------------
     |

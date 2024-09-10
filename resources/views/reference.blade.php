@@ -146,13 +146,13 @@
 
     <!-- Optional: You can set a full configuration object like this: -->
     <script>
-        var configuration = {!! Scalar::configurationJson() !!}
+        var configuration = {!! Scalar::configuration() !!}
 
         document.getElementById('api-reference').dataset.configuration =
             JSON.stringify(configuration)
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+    <script src="{{ Scalar::cdn() }}"></script>
 </body>
 
 </html>
