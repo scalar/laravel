@@ -29,7 +29,7 @@ php artisan vendor:publish --tag="scalar-views"
 
 ## Usage
 
-You’ll need an OpenAPI/Swagger document to render your API reference with Scalar, here are two packages that help generating those documents:
+You’ll need an OpenAPI/Swagger document to render your API reference with Scalar. Here are some packages that help generating those documents:
 
 * [knuckleswtf/scribe](https://github.com/knuckleswtf/scribe)
 * [dedoc/scramble](https://github.com/dedoc/scramble)
