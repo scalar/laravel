@@ -4,6 +4,14 @@ namespace Scalar\Scalar;
 
 class Scalar
 {
+    public static function pageTitle()
+    {
+        return config(
+            'scalar.configuration.metaData.title',
+            config('app.name').' API Reference'
+        );
+    }
+
     public static function url()
     {
         return config('scalar.url');
