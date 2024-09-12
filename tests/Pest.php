@@ -1,5 +1,5 @@
 <?php
 
-use Scalar\Scalar\Tests\TestCase;
+use Scalar\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

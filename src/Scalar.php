@@ -1,6 +1,6 @@
 <?php
 
-namespace Scalar\Scalar;
+namespace Scalar;
 
 class Scalar
 {

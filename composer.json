@@ -31,13 +31,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Scalar\\Scalar\\": "src/",
-            "Scalar\\Scalar\\Database\\Factories\\": "database/factories/"
+            "Scalar\\": "src/",
+            "Scalar\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Scalar\\Scalar\\Tests\\": "tests/",
+            "Scalar\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -69,10 +69,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Scalar\\Scalar\\ScalarServiceProvider"
+                "Scalar\\ScalarServiceProvider"
             ],
             "aliases": {
-                "Scalar": "Scalar\\Scalar\\Facades\\Scalar"
+                "Scalar": "Scalar\\Facades\\Scalar"
             }
         }
     },

@@ -1,10 +1,10 @@
 <?php
 
-namespace Scalar\Scalar\Tests;
+namespace Scalar\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Scalar\Scalar\ScalarServiceProvider;
+use Scalar\ScalarServiceProvider;
 
 class TestCase extends Orchestra
 {

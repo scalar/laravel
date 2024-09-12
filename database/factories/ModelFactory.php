@@ -1,6 +1,6 @@
 <?php
 
-namespace Scalar\Scalar\Database\Factories;
+namespace Scalar\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

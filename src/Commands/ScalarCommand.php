@@ -1,6 +1,6 @@
 <?php
 
-namespace Scalar\Scalar\Commands;
+namespace Scalar\Commands;
 
 use Illuminate\Console\Command;
 
