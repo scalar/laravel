@@ -35,7 +35,7 @@ You’ll need an OpenAPI/Swagger document to render your API reference with Scal
 * [dedoc/scramble](https://github.com/dedoc/scramble)
 * [vyuldashev/laravel-openapi](https://github.com/vyuldashev/laravel-openapi)
 
-Once done, you can pass it to Scalar:
+Once done, you can pass it to Scalar. Just make sure it’s a publicly accessible URL.
 
 ```php
 <?php
@@ -43,7 +43,11 @@ Once done, you can pass it to Scalar:
 // config/scalar.php
 
 return [
+    // …
+
     'url' => '/openapi.yaml',
+
+    // …
 ]
 ```
 
