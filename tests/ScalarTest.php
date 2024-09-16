@@ -18,10 +18,21 @@ it('returns a view', function () {
     $response->assertViewIs('scalar::reference');
 });
 
+it('contains the OpenAPI document URL', function () {
+    $response = $this->get(config('scalar.path'));
+
+    $response->assertOk()
+        ->assertViewIs('scalar::reference')
+        ->assertSee('data-url')
+        ->assertSee(config('scalar.url'));
+});
+
 it('contains the jsDelivr URL', function () {
     $response = $this->get(config('scalar.path'));
 
-    $response->assertSee(config('scalar.cdn'));
+    $response->assertOk()
+        ->assertViewIs('scalar::reference')
+        ->assertSee('https://cdn.jsdelivr.net/npm/@scalar/galaxy/dist/latest.json');
 });
 
 it('reflects changes in the config', function () {
