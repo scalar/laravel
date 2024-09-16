@@ -8,5 +8,5 @@ Route::group([
     'prefix' => config('scalar.path'),
     'middleware' => config('scalar.middleware', 'web'),
 ], function () {
-    Route::get('/', ScalarController::class);
+    Route::get('/', ScalarController::class)->name('scalar');
 });
