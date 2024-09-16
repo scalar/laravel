@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Scalar\Controllers\ScalarController;
 
@@ -22,7 +23,6 @@ it('contains the OpenAPI document URL', function () {
     $response = $this->get(config('scalar.path'));
 
     $response->assertOk()
-        ->assertViewIs('scalar::reference')
         ->assertSee('data-url')
         ->assertSee(config('scalar.url'));
 });
@@ -31,7 +31,6 @@ it('contains the jsDelivr URL', function () {
     $response = $this->get(config('scalar.path'));
 
     $response->assertOk()
-        ->assertViewIs('scalar::reference')
         ->assertSee('https://cdn.jsdelivr.net/npm/@scalar/galaxy/dist/latest.json');
 });
 
@@ -45,10 +44,24 @@ it('reflects changes in the config', function () {
     $response = $this->get('/reference');
 
     $response->assertOk()
-        ->assertViewIs('scalar::reference')
         ->assertSee('https://example.com/cdn')
         ->assertDontSee($originalCdn);
 
     // Reset config
     config(['scalar.cdn' => $originalCdn]);
+});
+
+it('doesn’t block access in production by default', function () {
+    $response = $this->get(config('scalar.path'));
+
+    $response->assertOk();
+});
+
+it('can block access in production', function () {
+    // Overwrite the viewScalar Gate to block access
+    Gate::define('viewScalar', fn ($user = null) => false);
+
+    $response = $this->get(config('scalar.path'));
+
+    $response->assertForbidden();
 });
