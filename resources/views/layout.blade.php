@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     @if (config('scalar.configuration.theme') === 'laravel')
         <style>
-            /* basic theme */
+            /* basic scalar */
             .light-mode {
                 --scalar-color-1: #2a2f45;
                 --scalar-color-2: #757575;
@@ -25,7 +25,7 @@
             .dark-mode {
                 --scalar-color-1: rgba(231, 232, 242, 1);
                 --scalar-color-2: rgba(181, 181, 189, 1);
-                --scalar-color-3: rgba(181, 181, 189, .66);
+                --scalar-color-3: rgba(181, 181, 189, 0.66);
                 --scalar-color-accent: #ff2c20;
 
                 --scalar-background-1: #171923;
@@ -57,31 +57,31 @@
 
             /* Document Sidebar */
             .light-mode .t-doc__sidebar {
-                --sidebar-background-1: #f9f9fc;
-                --sidebar-item-hover-color: currentColor;
-                --sidebar-item-hover-background: var(--scalar-background-2);
-                --sidebar-item-active-background: var(--scalar-background-accent);
-                --sidebar-border-color: var(--sidebar-background-1);
-                --sidebar-color-1: var(--scalar-color-1);
-                --sidebar-color-2: var(--scalar-color-2);
-                --sidebar-color-active: var(--scalar-color-accent);
-                --sidebar-search-background: transparent;
-                --sidebar-search-border-color: var(--scalar-border-color);
-                --sidebar-search--color: var(--scalar-color-3);
+                --scalar-sidebar-background-1: #f9f9fc;
+                --scalar-sidebar-item-hover-color: currentColor;
+                --scalar-sidebar-item-hover-background: var(--scalar-background-2);
+                --scalar-sidebar-item-active-background: var(--scalar-background-accent);
+                --scalar-sidebar-border-color: var(--scalar-sidebar-background-1);
+                --scalar-sidebar-color-1: var(--scalar-color-1);
+                --scalar-sidebar-color-2: var(--scalar-color-1);
+                --scalar-sidebar-color-active: var(--scalar-color-accent);
+                --scalar-sidebar-search-background: transparent;
+                --scalar-sidebar-search-border-color: var(--scalar-border-color);
+                --scalar-sidebar-search--color: var(--scalar-color-3);
             }
 
             .dark-mode .t-doc__sidebar {
-                --sidebar-background-1: #14151e;
-                --sidebar-item-hover-color: currentColor;
-                --sidebar-item-hover-background: var(--scalar-background-2);
-                --sidebar-item-active-background: var(--scalar-background-accent);
-                --sidebar-border-color: --sidebar-background-1;
-                --sidebar-color-1: var(--scalar-color-1);
-                --sidebar-color-2: var(--scalar-color-2);
-                --sidebar-color-active: var(--scalar-color-accent);
-                --sidebar-search-background: transparent;
-                --sidebar-search-border-color: var(--scalar-border-color);
-                --sidebar-search--color: var(--scalar-color-3);
+                --scalar-sidebar-background-1: #14151e;
+                --scalar-sidebar-item-hover-color: currentColor;
+                --scalar-sidebar-item-hover-background: var(--scalar-background-2);
+                --scalar-sidebar-item-active-background: var(--scalar-background-accent);
+                --scalar-sidebar-border-color: var(--scalar-sidebar-background-1);
+                --scalar-sidebar-color-1: var(--scalar-color-1);
+                --scalar-sidebar-color-2: var(--scalar-color-1);
+                --scalar-sidebar-color-active: var(--scalar-color-accent);
+                --scalar-sidebar-search-background: transparent;
+                --scalar-sidebar-search-border-color: var(--scalar-border-color);
+                --scalar-sidebar-search--color: var(--scalar-color-3);
             }
 
             /* advanced */
@@ -106,19 +106,19 @@
                 --scalar-button-1-color: #000;
                 --scalar-button-1-hover: #e7e7e7;
 
-                --scalar-color-green: #C3E88D;
+                --scalar-color-green: #c3e88d;
                 --scalar-color-red: #dc1b19;
                 --scalar-color-yellow: #ffc90d;
-                --scalar-color-blue: #82AAFF;
-                --scalar-color-orange: #FFCB8B;
+                --scalar-color-blue: #82aaff;
+                --scalar-color-orange: #ffcb8b;
                 --scalar-color-purple: #b191f9;
 
                 --scalar-scrollbar-color: rgba(255, 255, 255, 0.24);
                 --scalar-scrollbar-color-active: rgba(255, 255, 255, 0.48);
             }
 
-            /* custom theme */
-            .sidebar-indent-nested .sidebar-heading.active_page:not(.sidebar-group-item__folder):before {
+            /* custom scalar */
+            .sidebar-indent-nested .sidebar-indent-nested .sidebar-heading.active_page:not(.sidebar-group-item__folder):after {
                 content: "";
                 position: absolute;
                 top: 11px;
@@ -130,12 +130,7 @@
 
             .references-rendered .markdown a,
             .download-cta {
-                text-decoration: underline !important;
                 text-decoration-color: var(--scalar-color-accent) !important;
-            }
-
-            .t-doc__header .header-item-logo {
-                height: 32px
             }
         </style>
     @endif
