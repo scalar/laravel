@@ -7,6 +7,8 @@
 
 Use your OpenAPI documents to render modern API references in Laravel
 
+![Screenshot of a Laravel-themed API reference](.github/screenshot.png)
+
 ## Installation
 
 You can install the package via composer:
