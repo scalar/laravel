@@ -32,6 +32,9 @@ class Scalar
             'none' :
             config('scalar.configuration.theme');
 
+        /** Add Laravel integration identifier */
+        $configuration['_integration'] = isset($configuration['_integration']) ? $configuration['_integration'] : 'laravel';
+
         /** Render as JSON */
         return collect($configuration)->merge([
             'theme' => $theme,
