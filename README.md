@@ -14,7 +14,7 @@ Use your OpenAPI documents to render modern API references in Laravel
 You can install the package via composer:
 
 ```bash
-composer require scalar/laravel
+composer require devaction-labs/scalar
 ```
 
 You can publish the config file with:
