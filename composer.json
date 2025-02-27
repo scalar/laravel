@@ -1,5 +1,5 @@
 {
-    "name": "scalar/laravel-api",
+    "name": "laravel-api/scalar",
     "description": "Render your OpenAPI-based API reference",
     "keywords": [
         "scalar",
@@ -7,12 +7,12 @@
         "openapi",
         "swagger"
     ],
-    "homepage": "https://github.com/scalar/laravel",
+    "homepage": "//github.com/alexnogueirasilva",
     "license": "MIT",
     "authors": [
         {
-            "name": "Hans Pagel",
-            "email": "mail@hanspagel.com",
+            "name": "Alex Nogueira",
+            "email": "alex@devaction.com.br",
             "role": "Developer"
         }
     ],
