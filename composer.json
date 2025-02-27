@@ -1,5 +1,5 @@
 {
-    "name": "scalar/laravel",
+    "name": "scalar/laravel-api",
     "description": "Render your OpenAPI-based API reference",
     "keywords": [
         "scalar",
