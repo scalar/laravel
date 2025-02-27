@@ -1,5 +1,5 @@
 {
-    "name": "laravel-api/scalar",
+    "name": "devaction-labs/scalar",
     "description": "Render your OpenAPI-based API reference",
     "keywords": [
         "scalar",
