@@ -1,5 +1,5 @@
 {
-    "name": "devaction-labs/scalar",
+    "name": "scalar/laravel",
     "description": "Render your OpenAPI-based API reference",
     "keywords": [
         "scalar",
@@ -7,12 +7,12 @@
         "openapi",
         "swagger"
     ],
-    "homepage": "https://github.com/alexnogueirasilva",
+    "homepage": "https://github.com/scalar/laravel",
     "license": "MIT",
     "authors": [
         {
-            "name": "Alex Nogueira",
-            "email": "alex@devaction.com.br",
+            "name": "Hans Pagel",
+            "email": "mail@hanspagel.com",
             "role": "Developer"
         }
     ],
@@ -22,7 +22,6 @@
         "illuminate/contracts": "^10.0||^11.0||^12.0"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest",
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.1.1||^7.10.0",
         "orchestra/testbench": "^9.0.0||^8.22.0",
