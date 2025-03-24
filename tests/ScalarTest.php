@@ -23,15 +23,15 @@ it('contains the OpenAPI document URL', function () {
     $response = $this->get(config('scalar.path'));
 
     $response->assertOk()
-        ->assertSee('data-url')
-        ->assertSee(config('scalar.url'));
+        ->assertSee('Scalar.createApiReference')
+        ->assertSee(str_replace('/', '\/', config('scalar.url')));
 });
 
 it('contains the jsDelivr URL', function () {
     $response = $this->get(config('scalar.path'));
 
     $response->assertOk()
-        ->assertSee('https://cdn.jsdelivr.net/npm/@scalar/galaxy/dist/latest.json');
+        ->assertSee('https:\/\/cdn.jsdelivr.net\/npm\/@scalar\/galaxy\/dist\/latest.json');
 });
 
 it('reflects changes in the config', function () {
@@ -41,7 +41,7 @@ it('reflects changes in the config', function () {
     // Modify config
     config()->set('scalar.cdn', 'https://example.com/cdn');
 
-    $response = $this->get('/reference');
+    $response = $this->get('/scalar');
 
     $response->assertOk()
         ->assertSee('https://example.com/cdn')

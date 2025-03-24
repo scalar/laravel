@@ -1,12 +1,11 @@
 @extends('scalar::layout')
 
 @section('content')
-    <script id="api-reference" data-url="{{ \Scalar\Scalar::url() }}"></script>
-
-    <script>
-        document.getElementById('api-reference').dataset.configuration =
-            JSON.stringify({!! \Scalar\Scalar::configuration() !!})
-    </script>
+    <div id="app"></div>
 
     <script src="{{ \Scalar\Scalar::cdn() }}"></script>
+
+    <script>
+       Scalar.createApiReference('#app', {!! \Scalar\Scalar::configuration() !!})
+    </script>
 @endsection

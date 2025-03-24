@@ -38,6 +38,7 @@ class Scalar
         /** Render as JSON */
         return collect($configuration)->merge([
             'theme' => $theme,
+            'url' => config('scalar.url'),
         ]);
     }
 }
