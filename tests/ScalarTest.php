@@ -41,7 +41,7 @@ it('reflects changes in the config', function () {
     // Modify config
     config()->set('scalar.cdn', 'https://example.com/cdn');
 
-    $response = $this->get('/reference');
+    $response = $this->get('/scalar');
 
     $response->assertOk()
         ->assertSee('https://example.com/cdn')
