@@ -87,6 +87,7 @@ return [
         // 'saturn',
         // 'solarized',
         // 'none',
+
         /** The layout to use for the references */
         'layout' => 'modern',
 
@@ -151,11 +152,13 @@ return [
         'hiddenClients' => [
 
         ],
+
         /** Determine the HTTP client that’s selected by default */
         'defaultHttpClient' => [
             'targetId' => 'shell',
             'clientKey' => 'curl',
         ],
+
         /** Custom CSS to be added to the page */
         // 'customCss' => '',
 
