@@ -23,11 +23,11 @@
     },
     "require-dev": {
         "laravel/pint": "^1.14",
-        "nunomaduro/collision": "^8.1.1||^7.10.0",
-        "orchestra/testbench": "^9.0.0||^8.22.0",
-        "pestphp/pest": "^2.34",
-        "pestphp/pest-plugin-arch": "^2.7",
-        "pestphp/pest-plugin-laravel": "^2.3"
+        "nunomaduro/collision": "^8.7.0||^7.10.0",
+        "orchestra/testbench": "^9.0.0||^8.22.0||^10.1.0",
+        "pestphp/pest": "^3.7.4",
+        "pestphp/pest-plugin-arch": "^3.0.0",
+        "pestphp/pest-plugin-laravel": "^3.1.0"
     },
     "autoload": {
         "psr-4": {
