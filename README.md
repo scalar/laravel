@@ -62,6 +62,7 @@ The Scalar API reference may be accessed via the /scalar route. By default, ever
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -69,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Gate::define('viewScalar', function ($user) {
+        Gate::define('viewScalar', function (?User $user) {
             return in_array($user->email, [
                 //
             ]);
