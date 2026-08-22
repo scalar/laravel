@@ -9,8 +9,8 @@ class ScalarController extends Controller
 {
     public function __invoke()
     {
-        if (! Gate::check('viewScalar') && ! app()->environment('local')) {
-            return abort(403);
+        if (! app()->environment('local')) {
+            abort_unless(Gate::check('viewScalar'), 403);
         }
 
         return view('scalar::reference');
