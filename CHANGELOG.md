@@ -2,6 +2,24 @@
 
 All notable changes to `scalar/laravel` will be documented in this file.
 
+## 0.4.0 - 2026-08-24
+
+### Breaking changes
+
+* Drops Laravel 10 support. The package now requires Laravel 11, 12, or 13 (and Pest 3+ for development).
+* The default configuration gained `content`, `file`, and `sources` options. Please re-publish the config file: `php artisan vendor:publish --tag="scalar-config"`.
+
+### Features
+
+* Added a `php artisan scalar:install` command that publishes the config and finishes setup.
+* Render a local OpenAPI document without hosting it anywhere, via the new `content` (inline) and `file` (local path) options.
+* Render multiple or versioned documents behind a document switcher, via the `sources` config array or the `Scalar::document()` registrar.
+* Scalar now throws a clear `MissingOpenApiDocument` exception when no OpenAPI document is configured (instead of rendering an empty reference).
+
+### Internal
+
+* Hardened the package with static analysis (PHPStan + Larastan), 100% type and mutation coverage, and expanded architecture tests.
+
 ## 0.3.0 - 2026-08-24
 
 ### Breaking change
