@@ -60,7 +60,7 @@
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
         "test-types": "vendor/bin/pest --type-coverage --min=100",
-        "test-mutation": "vendor/bin/pest --mutate --everything --covered-only",
+        "test-mutation": "vendor/bin/pest --mutate --everything --covered-only --min=100",
         "format": "vendor/bin/pint"
     },
     "config": {

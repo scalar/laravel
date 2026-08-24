@@ -36,7 +36,5 @@ jobs:
       - name: Type coverage
         run: composer test-types
 
-      # Advisory until a baseline score is established; then set --min and make it blocking.
       - name: Mutation testing
-        run: vendor/bin/pest --mutate --parallel --everything --covered-only
-        continue-on-error: true
+        run: vendor/bin/pest --mutate --parallel --everything --covered-only --min=100
