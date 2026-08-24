@@ -11,33 +11,37 @@ Use your OpenAPI documents to render modern API references in Laravel
 
 ## Installation
 
-You can install the package via composer:
+Install the package via Composer:
 
 ```bash
 composer require scalar/laravel
 ```
 
-You can publish the config file with:
+Then run the install command to publish the config file and finish setup:
 
 ```bash
-php artisan vendor:publish --tag="scalar-config"
+php artisan scalar:install
 ```
 
-Optionally, you can publish the views using
+That’s everything you need to get started. Prefer to publish things manually? You can:
 
 ```bash
+# Publish the config file to config/scalar.php
+php artisan vendor:publish --tag="scalar-config"
+
+# Publish the Blade views (only needed if you want to customize them)
 php artisan vendor:publish --tag="scalar-views"
 ```
 
 ## Usage
 
-You’ll need an OpenAPI/Swagger document to render your API reference with Scalar. Here are some packages that help generating those documents:
+You’ll need an OpenAPI (formerly Swagger) document to render your API reference. Several packages can generate one from your Laravel app:
 
-* [knuckleswtf/scribe](https://github.com/knuckleswtf/scribe)
 * [dedoc/scramble](https://github.com/dedoc/scramble)
+* [knuckleswtf/scribe](https://github.com/knuckleswtf/scribe)
 * [vyuldashev/laravel-openapi](https://github.com/vyuldashev/laravel-openapi)
 
-Once done, you can pass it to Scalar. Just make sure it’s a publicly accessible URL.
+Point Scalar at your document through the `url` option — a path served by your own app or an absolute URL:
 
 ```php
 <?php
@@ -47,11 +51,23 @@ Once done, you can pass it to Scalar. Just make sure it’s a publicly accessibl
 return [
     // …
 
+    // A file in your public directory, a route that returns the document, …
     'url' => '/openapi.yaml',
 
+    // … or an absolute URL:
+    // 'url' => 'https://example.com/openapi.json',
+
     // …
-]
+];
 ```
+
+The document is fetched in the browser, so a relative URL just needs to be reachable on the same origin. An absolute, cross-origin URL needs to be publicly accessible (and may go through the built-in `proxyUrl`).
+
+Then visit `/scalar` to see your API reference.
+
+## Theme
+
+The reference ships with a Laravel-flavored theme, enabled by default (`'theme' => 'laravel'` in the config). Scalar also comes with a range of built-in themes — see the `configuration.theme` option in `config/scalar.php` for the full list.
 
 ## Authorization
 

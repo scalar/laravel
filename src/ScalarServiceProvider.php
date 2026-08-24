@@ -6,6 +6,7 @@ namespace Scalar;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Gate;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -24,6 +25,14 @@ class ScalarServiceProvider extends PackageServiceProvider
             ->name('scalar')
             ->hasConfigFile()
             ->hasViews('scalar')
-            ->hasRoute('web');
+            ->hasRoute('web')
+            ->hasInstallCommand(function (InstallCommand $command): void {
+                $command
+                    ->publishConfigFile()
+                    ->endWith(function (InstallCommand $command): void {
+                        $command->info('Point Scalar at your OpenAPI document via the `url` option in config/scalar.php, then visit /scalar.');
+                    })
+                    ->askToStarRepoOnGitHub('scalar/laravel');
+            });
     }
 }
