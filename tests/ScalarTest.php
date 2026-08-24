@@ -142,3 +142,9 @@ it('keeps a non-laravel theme unchanged', function () {
 
     expect(Scalar::configuration()['theme'])->toBe('moon');
 });
+
+it('preserves a custom integration identifier when one is set', function () {
+    config()->set('scalar.configuration._integration', 'custom');
+
+    expect(Scalar::configuration()['_integration'])->toBe('custom');
+});
