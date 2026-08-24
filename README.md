@@ -70,6 +70,32 @@ When more than one is set, `file` takes precedence over `content`, which takes p
 
 The reference ships with a Laravel-flavored theme, enabled by default (`'theme' => 'laravel'` in the config). Scalar also comes with a range of built-in themes — see the `configuration.theme` option in `config/scalar.php` for the full list.
 
+## Multiple documents
+
+Render more than one OpenAPI document behind a document switcher — useful for versioned APIs (`v1`, `v2`) or public vs. internal references. Define them in the `sources` config:
+
+```php
+// config/scalar.php
+
+'sources' => [
+    ['title' => 'API v1', 'slug' => 'v1', 'url' => '/openapi/v1.yaml'],
+    ['title' => 'API v2', 'slug' => 'v2', 'url' => '/openapi/v2.yaml', 'default' => true],
+],
+```
+
+Each source accepts a `title`, an optional `slug`, one of `url`/`content`/`file`, and an optional `default` flag.
+
+You can also register documents at runtime with the `Scalar` facade — for example in a service provider — which is handy when the list is dynamic:
+
+```php
+use Scalar\Facades\Scalar;
+
+Scalar::document('API v1')->url('/openapi/v1.yaml');
+Scalar::document('API v2')->file(storage_path('app/openapi/v2.json'))->default();
+```
+
+Registered documents take precedence over the `sources` config.
+
 ## Authorization
 
 The Scalar API reference may be accessed via the /scalar route. By default, everyone will be able to access this route. However, within your App\Providers\AppServiceProvider.php file, you can overwrite the gate definition. This authorization gate controls access to Scalar in non-local environments. You are free to modify this gate as needed to restrict access to your documentation:

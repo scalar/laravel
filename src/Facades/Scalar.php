@@ -7,6 +7,8 @@ namespace Scalar\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
+ * @method static \Scalar\Document document(?string $title = null)
+ * @method static array<array-key, \Scalar\Document> documents()
  * @method static string pageTitle()
  * @method static string|null url()
  * @method static string|null content()

@@ -78,6 +78,35 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Scalar OpenAPI Documents (multiple / versioned)
+    |--------------------------------------------------------------------------
+    |
+    | Render more than one OpenAPI document behind a document switcher. Each
+    | source accepts a `title`, an optional `slug`, one of `url`/`content`/
+    | `file`, and an optional `default` flag. When set, this takes precedence
+    | over the single-document options above.
+    |
+    | You can also register documents at runtime with the Scalar facade:
+    |
+    |     Scalar::document('API v2')->url('/openapi/v2.yaml')->default();
+    |
+    */
+    'sources' => [
+        // [
+        //     'title' => 'API v1',
+        //     'slug' => 'v1',
+        //     'url' => '/openapi/v1.yaml',
+        // ],
+        // [
+        //     'title' => 'API v2',
+        //     'slug' => 'v2',
+        //     'url' => '/openapi/v2.yaml',
+        //     'default' => true,
+        // ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Scalar CDN URL
     |--------------------------------------------------------------------------
     |

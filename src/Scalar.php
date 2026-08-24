@@ -10,7 +10,51 @@ use Scalar\Exceptions\MissingOpenApiDocument;
 
 class Scalar
 {
-    public static function pageTitle(): string
+    /**
+     * Documents registered programmatically.
+     *
+     * @var array<int, Document>
+     */
+    protected array $documents = [];
+
+    public function document(?string $title = null): Document
+    {
+        $document = new Document;
+
+        if ($title !== null) {
+            $document->title($title);
+        }
+
+        $this->documents[] = $document;
+
+        return $document;
+    }
+
+    /**
+     * Resolve the documents to render: registered documents first, then the
+     * `sources` config, otherwise fall back to a single-document setup.
+     *
+     * @return array<array-key, Document>
+     */
+    public function documents(): array
+    {
+        if ($this->documents !== []) {
+            return $this->documents;
+        }
+
+        $sources = config('scalar.sources');
+
+        if (is_array($sources) && $sources !== []) {
+            return array_map(
+                fn (mixed $source): Document => Document::fromArray(is_array($source) ? $source : []),
+                $sources
+            );
+        }
+
+        return [];
+    }
+
+    public function pageTitle(): string
     {
         $title = config('scalar.configuration.metaData.title');
 
@@ -23,14 +67,14 @@ class Scalar
         return (is_string($name) ? $name : 'Laravel').' API Reference';
     }
 
-    public static function url(): ?string
+    public function url(): ?string
     {
         $url = config('scalar.url');
 
         return is_string($url) && $url !== '' ? $url : null;
     }
 
-    public static function content(): ?string
+    public function content(): ?string
     {
         /** A local file is read on the server and embedded in the page. */
         $file = config('scalar.file');
@@ -51,7 +95,7 @@ class Scalar
         return is_string($content) && $content !== '' ? $content : null;
     }
 
-    public static function cdn(): string
+    public function cdn(): string
     {
         $cdn = config('scalar.cdn');
 
@@ -61,7 +105,7 @@ class Scalar
     /**
      * @return Collection<array-key, mixed>
      */
-    public static function configuration(): Collection
+    public function configuration(): Collection
     {
         $configuration = config('scalar.configuration');
         $configuration = is_array($configuration) ? $configuration : [];
@@ -74,20 +118,28 @@ class Scalar
         /** Add Laravel integration identifier */
         $configuration['_integration'] ??= 'laravel';
 
-        /** Resolve the OpenAPI document: inline content takes precedence over a URL. */
-        $content = self::content();
-        $url = self::url();
+        $base = collect($configuration)->merge(['theme' => $theme]);
+
+        /** Multiple/versioned documents render through a `sources` array. */
+        $documents = $this->documents();
+
+        if ($documents !== []) {
+            return $base->merge([
+                'sources' => array_map(fn (Document $document): array => $document->toArray(), $documents),
+            ]);
+        }
+
+        /** Otherwise, fall back to a single document: content takes precedence over a URL. */
+        $content = $this->content();
+        $url = $this->url();
 
         if ($content === null && $url === null) {
             throw new MissingOpenApiDocument(
-                'No OpenAPI document configured. Set the `url`, `content`, or `file` option in config/scalar.php.'
+                'No OpenAPI document configured. Set the `url`, `content`, `file`, or `sources` option in config/scalar.php.'
             );
         }
 
-        /** Render as JSON */
-        return collect($configuration)->merge([
-            'theme' => $theme,
-        ])->merge(
+        return $base->merge(
             $content !== null ? ['content' => $content] : ['url' => $url]
         );
     }
