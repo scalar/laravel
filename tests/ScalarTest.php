@@ -297,6 +297,15 @@ it('registers the document manager as a singleton', function () {
     expect(app(\Scalar\Scalar::class))->toBe(app(\Scalar\Scalar::class));
 });
 
+it('flushes registered documents', function () {
+    Scalar::document('API')->url('/openapi.yaml');
+    expect(Scalar::documents())->toHaveCount(1);
+
+    Scalar::flush();
+
+    expect(Scalar::documents())->toBe([]);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Document value object

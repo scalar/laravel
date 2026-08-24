@@ -96,6 +96,8 @@ Scalar::document('API v2')->file(storage_path('app/openapi/v2.json'))->default()
 
 Registered documents take precedence over the `sources` config.
 
+> Under [Laravel Octane](https://laravel.com/docs/octane) the manager is a long-lived singleton, so register documents once (in a service provider). If you register per request, call `Scalar::flush()` first to avoid them stacking up.
+
 ## Authorization
 
 The Scalar API reference may be accessed via the /scalar route. By default, everyone will be able to access this route. However, within your App\Providers\AppServiceProvider.php file, you can overwrite the gate definition. This authorization gate controls access to Scalar in non-local environments. You are free to modify this gate as needed to restrict access to your documentation:
