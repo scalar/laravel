@@ -1,39 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scalar;
+
+use Illuminate\Support\Collection;
 
 class Scalar
 {
-    public static function pageTitle()
+    public static function pageTitle(): string
     {
-        return config(
-            'scalar.configuration.metaData.title',
-            config('app.name').' API Reference'
-        );
+        $title = config('scalar.configuration.metaData.title');
+
+        if (is_string($title)) {
+            return $title;
+        }
+
+        $name = config('app.name');
+
+        return (is_string($name) ? $name : 'Laravel').' API Reference';
     }
 
-    public static function url()
+    public static function url(): ?string
     {
-        return config('scalar.url');
+        $url = config('scalar.url');
+
+        return is_string($url) ? $url : null;
     }
 
-    public static function cdn()
+    public static function cdn(): string
     {
-        return config('scalar.cdn', 'https://cdn.jsdelivr.net/npm/@scalar/api-reference');
+        $cdn = config('scalar.cdn');
+
+        return is_string($cdn) ? $cdn : 'https://cdn.jsdelivr.net/npm/@scalar/api-reference';
     }
 
-    public static function configuration()
+    /**
+     * @return Collection<array-key, mixed>
+     */
+    public static function configuration(): Collection
     {
-        /** Get the Scalar API Reference configuration */
         $configuration = config('scalar.configuration');
+        $configuration = is_array($configuration) ? $configuration : [];
 
         /** Don’t add a theme if `laravel` is selected */
-        $theme = config('scalar.configuration.theme') === 'laravel' ?
-            'none' :
-            config('scalar.configuration.theme');
+        $theme = ($configuration['theme'] ?? null) === 'laravel'
+            ? 'none'
+            : ($configuration['theme'] ?? null);
 
         /** Add Laravel integration identifier */
-        $configuration['_integration'] = isset($configuration['_integration']) ? $configuration['_integration'] : 'laravel';
+        $configuration['_integration'] ??= 'laravel';
 
         /** Render as JSON */
         return collect($configuration)->merge([

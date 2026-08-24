@@ -1,0 +1,40 @@
+name: code-quality
+
+on:
+  push:
+    paths:
+      - '**.php'
+      - 'phpstan.neon'
+      - 'composer.json'
+      - '.github/workflows/code-quality.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, fileinfo
+          coverage: pcov
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction
+
+      - name: Static analysis (PHPStan)
+        run: composer analyse
+
+      - name: Type coverage
+        run: composer test-types
+
+      - name: Mutation testing
+        run: vendor/bin/pest --mutate --parallel --everything --covered-only --min=100
