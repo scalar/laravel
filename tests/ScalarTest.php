@@ -4,6 +4,7 @@ use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Scalar\Controllers\ScalarController;
+use Scalar\Exceptions\MissingOpenApiDocument;
 use Scalar\Scalar;
 
 it('registers the route', function () {
@@ -154,4 +155,68 @@ it('publishes the config file via the install command', function () {
         ->expectsConfirmation('Would you like to star our repo on GitHub?', 'no')
         ->expectsOutputToContain('Point Scalar at your OpenAPI document')
         ->assertExitCode(0);
+});
+
+it('embeds raw content and drops the url when content is set', function () {
+    config()->set('scalar.content', '{"openapi":"3.1.0"}');
+
+    $configuration = Scalar::configuration();
+
+    expect($configuration['content'])->toBe('{"openapi":"3.1.0"}')
+        ->and($configuration->has('url'))->toBeFalse();
+});
+
+it('embeds a local file as content, taking precedence over content and url', function () {
+    config()->set('scalar.file', __DIR__.'/Fixtures/openapi.json');
+    config()->set('scalar.content', '{"openapi":"3.1.0"}');
+
+    $configuration = Scalar::configuration();
+
+    expect($configuration['content'])->toContain('Fixture API')
+        ->and($configuration->has('url'))->toBeFalse();
+});
+
+it('throws when the configured file does not exist', function () {
+    config()->set('scalar.file', __DIR__.'/Fixtures/does-not-exist.json');
+
+    Scalar::configuration();
+})->throws(MissingOpenApiDocument::class);
+
+it('throws when no OpenAPI document is configured', function () {
+    config()->set('scalar.url', null);
+    config()->set('scalar.content', null);
+    config()->set('scalar.file', null);
+
+    Scalar::configuration();
+})->throws(MissingOpenApiDocument::class);
+
+it('treats an empty url as no document', function () {
+    config()->set('scalar.url', '');
+    config()->set('scalar.content', null);
+    config()->set('scalar.file', null);
+
+    Scalar::configuration();
+})->throws(MissingOpenApiDocument::class);
+
+it('treats empty content as no document', function () {
+    config()->set('scalar.url', null);
+    config()->set('scalar.content', '');
+    config()->set('scalar.file', null);
+
+    Scalar::configuration();
+})->throws(MissingOpenApiDocument::class);
+
+it('ignores an empty file path and falls back to content', function () {
+    config()->set('scalar.file', '');
+    config()->set('scalar.content', '{"openapi":"3.1.0"}');
+
+    expect(Scalar::configuration()['content'])->toBe('{"openapi":"3.1.0"}');
+});
+
+it('renders inline content through the reference view', function () {
+    config()->set('scalar.content', '{"openapi":"3.1.0","info":{"title":"Inline"}}');
+
+    $this->get(config('scalar.path'))
+        ->assertOk()
+        ->assertSee('"content":', false);
 });
