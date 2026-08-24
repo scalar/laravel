@@ -86,6 +86,7 @@ return [
         // 'purple',
         // 'saturn',
         // 'solarized',
+        // 'laserwave',
         // 'none',
 
         /** The layout to use for the references */
@@ -103,9 +104,10 @@ return [
         'hideModels' => false,
 
         /**
-         * Whether to show the “Download OpenAPI Document” button
+         * File type of the “Download OpenAPI Document” button.
+         * One of: 'json', 'yaml', 'both', 'direct', 'none' (set to 'none' to hide it).
          */
-        'hideDownloadButton' => false,
+        'documentDownloadType' => 'both',
 
         /**
          * Whether to show the “Test Request” button
@@ -155,7 +157,7 @@ return [
 
         /** Determine the HTTP client that’s selected by default */
         'defaultHttpClient' => [
-            'targetId' => 'shell',
+            'targetKey' => 'shell',
             'clientKey' => 'curl',
         ],
 
@@ -193,6 +195,48 @@ return [
          * By default we only open the relevant tag based on the url, however if you want all the tags open by default then set this configuration option :)
          */
         'defaultOpenAllTags' => false,
+
+        /** Whether to open the first tag when the url doesn’t point to a specific operation */
+        'defaultOpenFirstTag' => true,
+
+        /** Whether to show the operationId next to the operation summary */
+        'showOperationId' => false,
+
+        /** Whether to show the “Open API Client” button in the sidebar and modal */
+        'hideClientButton' => false,
+
+        /** Whether to expand all model sections by default (can be slow on big documents) */
+        'expandAllModelSections' => false,
+
+        /** Whether to expand all response sections by default */
+        'expandAllResponses' => false,
+
+        /** Whether to expand all nested schema properties by default (can be slow on big documents) */
+        'expandAllSchemaProperties' => false,
+
+        /** Label used for the models/schemas section. Use 'Schemas' for OpenAPI terminology. */
+        'modelsSectionLabel' => 'Models',
+
+        /** Whether the sidebar and search use the operation 'summary' or 'path' */
+        'operationTitleSource' => 'summary',
+
+        /** Whether required properties are ordered before optional ones in schemas */
+        'orderRequiredPropertiesFirst' => true,
+
+        /** How schema properties are ordered: 'alpha' or 'preserve' */
+        'orderSchemaPropertiesBy' => 'alpha',
+
+        /** How operations are sorted in the sidebar: 'alpha', 'method' */
+        'operationsSorter' => 'alpha',
+
+        /** Whether to persist authentication credentials in the browser’s local storage */
+        'persistAuth' => false,
+
+        /** Whether to send anonymous telemetry (only when the analytics plugin is loaded) */
+        'telemetry' => true,
+
+        /** When to show the developer tools: 'always', 'localhost', 'never' */
+        'showDeveloperTools' => 'localhost',
     ],
 
 ];
