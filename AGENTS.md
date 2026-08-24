@@ -6,7 +6,7 @@ This file provides guidance to Coding Agents when working with code in this repo
 
 `scalar/laravel` is a **Laravel package** (not an application) that renders modern API references from an OpenAPI document. It exposes a single route (`/scalar` by default) that serves an HTML page loading the Scalar API reference from a CDN, configured entirely through `config/scalar.php`.
 
-The package is built on [spatie/laravel-package-tools](https://github.com/spatie/laravel-package-tools) and is tested against Laravel 10–13 / PHP 8.2–8.3 using [Orchestra Testbench](https://github.com/orchestral/testbench).
+The package is built on [spatie/laravel-package-tools](https://github.com/spatie/laravel-package-tools) and is tested against Laravel 11–13 / PHP 8.2–8.5 using [Orchestra Testbench](https://github.com/orchestral/testbench).
 
 ## Commands
 
