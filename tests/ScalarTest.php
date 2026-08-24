@@ -292,6 +292,11 @@ it('renders sources through the reference view', function () {
         ->assertSee('"sources":', false);
 });
 
+it('registers the document manager as a singleton', function () {
+    // A shared instance is what lets registered documents survive to render time.
+    expect(app(\Scalar\Scalar::class))->toBe(app(\Scalar\Scalar::class));
+});
+
 /*
 |--------------------------------------------------------------------------
 | Document value object
