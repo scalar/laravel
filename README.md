@@ -41,29 +41,30 @@ You’ll need an OpenAPI (formerly Swagger) document to render your API referenc
 * [knuckleswtf/scribe](https://github.com/knuckleswtf/scribe)
 * [vyuldashev/laravel-openapi](https://github.com/vyuldashev/laravel-openapi)
 
-Point Scalar at your document through the `url` option — a path served by your own app or an absolute URL:
+Point Scalar at your document in `config/scalar.php`. You can provide it in three ways:
+
+**A URL** fetched by the browser — a path served by your own app, or an absolute URL:
 
 ```php
-<?php
-
-// config/scalar.php
-
-return [
-    // …
-
-    // A file in your public directory, a route that returns the document, …
-    'url' => '/openapi.yaml',
-
-    // … or an absolute URL:
-    // 'url' => 'https://example.com/openapi.json',
-
-    // …
-];
+'url' => '/openapi.yaml',
+// 'url' => 'https://example.com/openapi.json',
 ```
 
-The document is fetched in the browser, so a relative URL just needs to be reachable on the same origin. An absolute, cross-origin URL needs to be publicly accessible (and may go through the built-in `proxyUrl`).
+A relative URL just needs to be reachable on the same origin. An absolute, cross-origin URL needs to be publicly accessible (and may go through the built-in `proxyUrl`).
 
-Then visit `/scalar` to see your API reference.
+**A local file** read on the server and embedded in the page — it never needs to be publicly accessible:
+
+```php
+'file' => storage_path('app/openapi.json'),
+```
+
+**Inline content** — the raw OpenAPI document as a JSON or YAML string:
+
+```php
+'content' => '{ "openapi": "3.1.0", "info": { "title": "My API", "version": "1.0.0" } }',
+```
+
+When more than one is set, `file` takes precedence over `content`, which takes precedence over `url`. Then visit `/scalar` to see your API reference.
 
 ## Theme
 

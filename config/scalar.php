@@ -52,6 +52,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Scalar OpenAPI Document Content
+    |--------------------------------------------------------------------------
+    |
+    | Instead of fetching the document from a URL, you can embed it directly in
+    | the page. Provide the raw OpenAPI document as a JSON or YAML string. When
+    | set, this takes precedence over the URL above and the browser makes no
+    | extra request for the document.
+    |
+    */
+    'content' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scalar OpenAPI Document File
+    |--------------------------------------------------------------------------
+    |
+    | Path to a local OpenAPI document (for example storage_path('app/openapi.
+    | json')). The file is read on the server and embedded in the page, so it
+    | never needs to be publicly accessible. This takes precedence over both
+    | the content and URL options above.
+    |
+    */
+    'file' => null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Scalar CDN URL
     |--------------------------------------------------------------------------
     |
