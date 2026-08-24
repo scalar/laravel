@@ -152,5 +152,6 @@ it('preserves a custom integration identifier when one is set', function () {
 it('publishes the config file via the install command', function () {
     $this->artisan('scalar:install')
         ->expectsConfirmation('Would you like to star our repo on GitHub?', 'no')
+        ->expectsOutputToContain('Point Scalar at your OpenAPI document')
         ->assertExitCode(0);
 });
