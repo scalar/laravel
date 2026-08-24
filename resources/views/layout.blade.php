@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{{ \Scalar\Scalar::pageTitle() }}</title>
+    <title>{{ \Scalar\Facades\Scalar::pageTitle() }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     @if (config('scalar.configuration.theme') === 'laravel')

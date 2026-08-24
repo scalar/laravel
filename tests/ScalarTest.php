@@ -4,8 +4,9 @@ use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Scalar\Controllers\ScalarController;
+use Scalar\Document;
 use Scalar\Exceptions\MissingOpenApiDocument;
-use Scalar\Scalar;
+use Scalar\Facades\Scalar;
 
 it('registers the route', function () {
     $routes = Route::getRoutes();
@@ -219,4 +220,157 @@ it('renders inline content through the reference view', function () {
     $this->get(config('scalar.path'))
         ->assertOk()
         ->assertSee('"content":', false);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Multiple / versioned documents
+|--------------------------------------------------------------------------
+*/
+
+it('renders a registered document as a source', function () {
+    Scalar::document('API v1')->url('/openapi/v1.yaml');
+
+    expect(Scalar::configuration()['sources'])->toBe([
+        ['title' => 'API v1', 'url' => '/openapi/v1.yaml'],
+    ]);
+});
+
+it('renders multiple registered documents as sources', function () {
+    Scalar::document('API v1')->url('/openapi/v1.yaml');
+    Scalar::document('API v2')->slug('v2')->url('/openapi/v2.yaml')->default();
+
+    expect(Scalar::configuration()['sources'])->toBe([
+        ['title' => 'API v1', 'url' => '/openapi/v1.yaml'],
+        ['title' => 'API v2', 'slug' => 'v2', 'url' => '/openapi/v2.yaml', 'default' => true],
+    ]);
+});
+
+it('renders documents from the sources config', function () {
+    config()->set('scalar.sources', [
+        ['title' => 'v1', 'url' => '/v1.yaml'],
+        ['title' => 'v2', 'url' => '/v2.yaml', 'default' => true],
+    ]);
+
+    expect(Scalar::configuration()['sources'])->toBe([
+        ['title' => 'v1', 'url' => '/v1.yaml'],
+        ['title' => 'v2', 'url' => '/v2.yaml', 'default' => true],
+    ]);
+});
+
+it('falls back to the single document when the sources config is empty', function () {
+    config()->set('scalar.sources', []);
+    config()->set('scalar.url', '/openapi.yaml');
+
+    $configuration = Scalar::configuration();
+
+    expect($configuration['url'])->toBe('/openapi.yaml')
+        ->and($configuration->has('sources'))->toBeFalse();
+});
+
+it('ignores a non-array sources config', function () {
+    config()->set('scalar.sources', 'nonsense');
+    config()->set('scalar.url', '/openapi.yaml');
+
+    expect(Scalar::configuration()->has('sources'))->toBeFalse();
+});
+
+it('prefers registered documents over the sources config', function () {
+    config()->set('scalar.sources', [['url' => '/from-config.yaml']]);
+    Scalar::document('Registered')->url('/registered.yaml');
+
+    expect(Scalar::configuration()['sources'])->toBe([
+        ['title' => 'Registered', 'url' => '/registered.yaml'],
+    ]);
+});
+
+it('renders sources through the reference view', function () {
+    Scalar::document('API')->url('/openapi.yaml');
+
+    $this->get(config('scalar.path'))
+        ->assertOk()
+        ->assertSee('"sources":', false);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Document value object
+|--------------------------------------------------------------------------
+*/
+
+it('builds a source from a document url', function () {
+    expect((new Document)->url('/openapi.yaml')->toArray())
+        ->toBe(['url' => '/openapi.yaml']);
+});
+
+it('builds a source from document content', function () {
+    expect((new Document)->content('{"openapi":"3.1.0"}')->toArray())
+        ->toBe(['content' => '{"openapi":"3.1.0"}']);
+});
+
+it('prefers document content over its url', function () {
+    expect((new Document)->url('/openapi.yaml')->content('{"openapi":"3.1.0"}')->toArray())
+        ->toBe(['content' => '{"openapi":"3.1.0"}']);
+});
+
+it('reads a document file into content', function () {
+    $source = (new Document)->file(__DIR__.'/Fixtures/openapi.json')->toArray();
+
+    expect($source['content'])->toContain('Fixture API')
+        ->and($source)->not->toHaveKey('url');
+});
+
+it('includes title, slug and default in the source', function () {
+    expect((new Document)->title('T')->slug('s')->url('/o.yaml')->default()->toArray())
+        ->toBe(['title' => 'T', 'slug' => 's', 'url' => '/o.yaml', 'default' => true]);
+});
+
+it('throws when a document file does not exist', function () {
+    (new Document)->file(__DIR__.'/Fixtures/does-not-exist.json')->toArray();
+})->throws(MissingOpenApiDocument::class);
+
+it('throws when a document has no source', function () {
+    (new Document)->toArray();
+})->throws(MissingOpenApiDocument::class);
+
+it('throws when a document url is empty', function () {
+    (new Document)->url('')->toArray();
+})->throws(MissingOpenApiDocument::class);
+
+it('throws when document content is empty', function () {
+    (new Document)->content('')->toArray();
+})->throws(MissingOpenApiDocument::class);
+
+it('ignores an empty document file path', function () {
+    expect((new Document)->file('')->content('{"openapi":"3.1.0"}')->toArray())
+        ->toBe(['content' => '{"openapi":"3.1.0"}']);
+});
+
+it('builds a document from an array', function () {
+    expect(Document::fromArray([
+        'title' => 'T',
+        'slug' => 's',
+        'url' => '/o.yaml',
+        'default' => true,
+    ])->toArray())->toBe(['title' => 'T', 'slug' => 's', 'url' => '/o.yaml', 'default' => true]);
+});
+
+it('builds a document from an array with content', function () {
+    expect(Document::fromArray(['content' => '{"openapi":"3.1.0"}'])->toArray())
+        ->toBe(['content' => '{"openapi":"3.1.0"}']);
+});
+
+it('builds a document from an array with a file', function () {
+    expect(Document::fromArray(['file' => __DIR__.'/Fixtures/openapi.json'])->toArray()['content'])
+        ->toContain('Fixture API');
+});
+
+it('builds a document from an array without optional keys', function () {
+    expect(Document::fromArray(['url' => '/o.yaml'])->toArray())
+        ->toBe(['url' => '/o.yaml']);
+});
+
+it('does not mark a document as default when the flag is false', function () {
+    expect(Document::fromArray(['url' => '/o.yaml', 'default' => false])->toArray())
+        ->not->toHaveKey('default');
 });

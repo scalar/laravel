@@ -12,6 +12,11 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class ScalarServiceProvider extends PackageServiceProvider
 {
+    public function packageRegistered(): void
+    {
+        $this->app->singleton(Scalar::class);
+    }
+
     public function boot(): void
     {
         parent::boot();
