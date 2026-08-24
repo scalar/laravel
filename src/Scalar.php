@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Scalar;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Scalar\Exceptions\MissingOpenApiDocument;
 
 class Scalar
@@ -41,7 +42,7 @@ class Scalar
                 );
             }
 
-            return (string) file_get_contents($file);
+            return File::get($file);
         }
 
         /** Otherwise, use the inline content as-is. */
