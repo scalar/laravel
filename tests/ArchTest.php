@@ -3,7 +3,11 @@
 use Illuminate\Support\Facades\Facade;
 
 arch('it will not use debugging functions')
-    ->expect(['dd', 'ddd', 'dump', 'ray'])
+    ->expect(['dd', 'ddd', 'dump', 'ray', 'var_dump', 'die', 'phpinfo'])
+    ->each->not->toBeUsed();
+
+arch('it will not use insecure functions')
+    ->expect(['eval', 'exec', 'shell_exec', 'system', 'passthru', 'md5', 'sha1', 'unserialize', 'extract'])
     ->each->not->toBeUsed();
 
 arch('it uses strict types')
@@ -26,7 +30,3 @@ arch('exceptions extend RuntimeException')
 arch('the document value object is final')
     ->expect('Scalar\Document')
     ->toBeFinal();
-
-arch()->preset()->php();
-
-arch()->preset()->security();
