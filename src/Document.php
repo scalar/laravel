@@ -136,16 +136,24 @@ final class Document
         return $source;
     }
 
+    /**
+     * Read an OpenAPI document from a local file, embedding its contents.
+     */
+    public static function readFile(string $file): string
+    {
+        if (! is_file($file)) {
+            throw new MissingOpenApiDocument(
+                "The configured OpenAPI document could not be found at: {$file}"
+            );
+        }
+
+        return File::get($file);
+    }
+
     protected function resolveContent(): ?string
     {
         if ($this->file !== null && $this->file !== '') {
-            if (! is_file($this->file)) {
-                throw new MissingOpenApiDocument(
-                    "The configured OpenAPI document could not be found at: {$this->file}"
-                );
-            }
-
-            return File::get($this->file);
+            return self::readFile($this->file);
         }
 
         return $this->content !== null && $this->content !== '' ? $this->content : null;

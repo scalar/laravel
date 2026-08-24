@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Scalar;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 use Scalar\Exceptions\MissingOpenApiDocument;
 
 class Scalar
@@ -28,6 +27,18 @@ class Scalar
         $this->documents[] = $document;
 
         return $document;
+    }
+
+    /**
+     * Forget all programmatically registered documents.
+     *
+     * The manager is a long-lived singleton, so under Laravel Octane you should
+     * register documents once (in a service provider) or flush them yourself if
+     * you register per request.
+     */
+    public function flush(): void
+    {
+        $this->documents = [];
     }
 
     /**
@@ -80,13 +91,7 @@ class Scalar
         $file = config('scalar.file');
 
         if (is_string($file) && $file !== '') {
-            if (! is_file($file)) {
-                throw new MissingOpenApiDocument(
-                    "The configured OpenAPI document could not be found at: {$file}"
-                );
-            }
-
-            return File::get($file);
+            return Document::readFile($file);
         }
 
         /** Otherwise, use the inline content as-is. */
