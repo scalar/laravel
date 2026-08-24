@@ -65,3 +65,22 @@ it('can block access in production', function () {
 
     $response->assertForbidden();
 });
+
+it('renders configuration options as JSON', function () {
+    $response = $this->get(config('scalar.path'));
+
+    $response->assertOk()
+        // defaultHttpClient uses the `targetKey` key expected by Scalar
+        ->assertSee('"targetKey":"shell"', false)
+        // the download button is controlled via documentDownloadType
+        ->assertSee('"documentDownloadType":"both"', false);
+});
+
+it('reflects configuration changes in the rendered JSON', function () {
+    config()->set('scalar.configuration.showOperationId', true);
+
+    $response = $this->get(config('scalar.path'));
+
+    $response->assertOk()
+        ->assertSee('"showOperationId":true', false);
+});
