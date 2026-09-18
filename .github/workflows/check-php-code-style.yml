@@ -1,0 +1,19 @@
+name: Check PHP code style
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+      - run: composer update --prefer-stable --prefer-dist --no-interaction
+      - run: vendor/bin/pint --test

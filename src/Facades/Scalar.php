@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string pageTitle()
  * @method static string|null url()
  * @method static string|null content()
+ * @method static string configurationJson()
  * @method static string cdn()
  * @method static \Illuminate\Support\Collection<array-key, mixed> configuration()
  *

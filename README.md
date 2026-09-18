@@ -66,6 +66,12 @@ A relative URL just needs to be reachable on the same origin. An absolute, cross
 
 When more than one is set, `file` takes precedence over `content`, which takes precedence over `url`. Then visit `/scalar` to see your API reference.
 
+## Scalar client
+
+The default CDN URL pins Scalar 1.69.0. Package releases update this version after testing. Set `cdn` to use another version or a self-hosted standalone bundle.
+
+The Laravel theme, application title, proxy URL, and other published defaults stay unchanged. Review `configuration.proxyUrl` if requests should not use Scalar's public proxy.
+
 ## Theme
 
 The reference ships with a Laravel-flavored theme, enabled by default (`'theme' => 'laravel'` in the config). Scalar also comes with a range of built-in themes — see the `configuration.theme` option in `config/scalar.php` for the full list.
@@ -94,7 +100,9 @@ Scalar::document('API v1')->url('/openapi/v1.yaml');
 Scalar::document('API v2')->file(storage_path('app/openapi/v2.json'))->default();
 ```
 
-Registered documents take precedence over the `sources` config.
+Registered documents take precedence over the `sources` config. Document inputs belong in the top-level `url`, `content`, `file`, and `sources` settings. These keys are ignored inside `configuration`, so the rendered configuration contains only the selected document input.
+
+Use `configuration` for other Scalar options. Configuration is serialized as JSON, so JavaScript callbacks cannot be supplied as PHP closures.
 
 > Under [Laravel Octane](https://laravel.com/docs/octane) the manager is a long-lived singleton, so register documents once (in a service provider). If you register per request, call `Scalar::flush()` first to avoid them stacking up.
 
@@ -123,6 +131,8 @@ class AppServiceProvider extends ServiceProvider
     }
 }
 ```
+
+The gate protects the reference page. A document fetched from a URL needs its own access rules. To keep a local document behind the page's gate, use `file` or `content`; authorized viewers receive the document in the HTML.
 
 ## Testing
 

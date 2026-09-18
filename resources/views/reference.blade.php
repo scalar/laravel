@@ -6,6 +6,6 @@
     <script src="{{ \Scalar\Facades\Scalar::cdn() }}"></script>
 
     <script>
-       Scalar.createApiReference('#app', {!! \Scalar\Facades\Scalar::configuration() !!})
+       Scalar.createApiReference('#app', {!! \Scalar\Facades\Scalar::configurationJson() !!})
     </script>
 @endsection

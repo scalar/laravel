@@ -388,3 +388,49 @@ it('does not mark a document as default when the flag is false', function () {
     expect(Document::fromArray(['url' => '/o.yaml', 'default' => false])->toArray())
         ->not->toHaveKey('default');
 });
+
+it('keeps document inputs out of the pass-through configuration', function (array $input, string $selected) {
+    config()->set('scalar.configuration', [
+        'url' => '/stale.yaml',
+        'content' => 'stale',
+        'file' => '/private/stale.yaml',
+        'sources' => [['url' => '/stale-source.yaml']],
+        'darkMode' => true,
+    ]);
+    foreach ($input as $key => $value) {
+        config()->set('scalar.'.$key, $value);
+    }
+
+    $configuration = Scalar::configuration();
+    expect($configuration->only(['url', 'content', 'file', 'sources'])->keys()->all())->toBe([$selected])
+        ->and($configuration['darkMode'])->toBeTrue();
+})->with([
+    'URL' => [['url' => '/actual.yaml'], 'url'],
+    'content' => [['content' => '{}'], 'content'],
+    'file' => [['file' => __DIR__.'/Fixtures/openapi.json'], 'content'],
+    'sources' => [['sources' => [['url' => '/actual.yaml']]], 'sources'],
+]);
+
+it('safely embeds configuration and inline document strings', function () {
+    $payload = '</script><script>alert("x" & \'y\')</script>';
+    config()->set('scalar.content', $payload);
+    config()->set('scalar.configuration.metaData.title', $payload);
+
+    $json = Scalar::configurationJson();
+    expect($json)->not->toContain('<', '>', '&', "'")
+        ->and(json_decode($json, true, flags: JSON_THROW_ON_ERROR)['content'])->toBe($payload);
+    $this->get('/scalar')->assertOk()->assertDontSee($payload, false)->assertSee($json, false);
+});
+
+it('reports invalid UTF-8 in configuration', function () {
+    config()->set('scalar.configuration.metaData.title', "\xB1\x31");
+
+    Scalar::configurationJson();
+})->throws(JsonException::class);
+
+it('pins the default client and its fallback to the tested version', function () {
+    $cdn = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.69.0/dist/browser/standalone.js';
+    expect(Scalar::cdn())->toBe($cdn);
+    config()->set('scalar.cdn', null);
+    expect(Scalar::cdn())->toBe($cdn);
+});
