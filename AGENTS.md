@@ -34,7 +34,7 @@ The request flow is small and worth understanding end-to-end:
 
 4. **`resources/views/reference.blade.php`** + **`layout.blade.php`** — the reference view injects the CDN `<script>` and calls `Scalar.createApiReference()` with the JSON config. The layout ships inline CSS variables for the custom `laravel` theme.
 
-5. **`src/Scalar.php`** — a static helper (fronted by the `Scalar\Facades\Scalar` facade) that the Blade views call to resolve `pageTitle()`, `url()`, `cdn()`, and `configuration()`. Two behaviors to know: when the theme is `'laravel'` it passes `theme => 'none'` to Scalar (the theme is applied via the layout's CSS instead), and it injects `_integration => 'laravel'` into the config.
+5. **`src/Scalar.php`** — a singleton document manager (fronted by the `Scalar\Facades\Scalar` facade) that the Blade views call to resolve `pageTitle()`, `url()`, `cdn()`, `configuration()`, and `configurationJson()`. Two behaviors to know: when the theme is `'laravel'` it passes `theme => 'none'` to Scalar (the theme is applied via the layout's CSS instead), and it injects `_integration => 'laravel'` into the config.
 
 **Config is the primary API.** Almost all behavior (path, domain, middleware, OpenAPI document `url`, `cdn`, and the nested `configuration` array of Scalar options) is driven by `config/scalar.php`. Consumers override it by publishing the config or setting values at runtime — tests exercise both. When adding a feature, prefer surfacing it through config over hardcoding.
 
@@ -43,5 +43,5 @@ The request flow is small and worth understanding end-to-end:
 ## Testing notes
 
 - Tests use **Pest** with `Scalar\Tests\TestCase` (extends Testbench's `TestCase`), wired up in `tests/Pest.php` for all files under `tests/`.
-- `tests/ArchTest.php` asserts `dd`, `dump`, and `ray` are never used in the codebase — don't leave debugging calls behind.
+- `tests/ArchTest.php` checks architecture presets and forbids `dd` and `ddd` in the codebase — don't leave debugging calls behind.
 - The `workbench/` directory is a minimal Laravel app used by Testbench for building/serving locally; it is not the package itself.

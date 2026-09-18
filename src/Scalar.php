@@ -107,6 +107,14 @@ class Scalar
         return is_string($cdn) ? $cdn : 'https://cdn.jsdelivr.net/npm/@scalar/api-reference';
     }
 
+    public function configurationJson(): string
+    {
+        return json_encode(
+            $this->configuration()->all(),
+            JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR
+        );
+    }
+
     /**
      * @return Collection<array-key, mixed>
      */
@@ -123,7 +131,7 @@ class Scalar
         /** Add Laravel integration identifier */
         $configuration['_integration'] ??= 'laravel';
 
-        $base = collect($configuration)->merge(['theme' => $theme]);
+        $base = collect($configuration)->except(['url', 'content', 'file', 'sources'])->merge(['theme' => $theme]);
 
         /** Multiple/versioned documents render through a `sources` array. */
         $documents = $this->documents();
