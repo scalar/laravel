@@ -2,6 +2,24 @@
 
 All notable changes to `scalar/laravel` will be documented in this file.
 
+## 0.4.1 - 2026-09-18
+
+### Fixes
+
+* Respect the selected OpenAPI document input by ignoring `url`, `content`, `file`, and `sources` inside `configuration`. Use the top-level document settings or `Scalar::document()` to select documents. (#31)
+* Safely encode configuration embedded in the reference page with script-safe JSON escaping. (#31)
+
+### Documentation
+
+* Clarify document configuration, JSON serialization, document access rules, and how to pin or self-host the Scalar client. (#31)
+
+### Internal
+
+* Add regression tests and pull request checks. (#31)
+* Pin all GitHub Actions to full commit hashes. (#32)
+
+**Full Changelog**: https://github.com/scalar/laravel/compare/0.4.0...0.4.1
+
 ## 0.4.0 - 2026-08-24
 
 ### Breaking changes
