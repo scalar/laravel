@@ -429,8 +429,8 @@ it('reports invalid UTF-8 in configuration', function () {
     Scalar::configurationJson();
 })->throws(JsonException::class);
 
-it('pins the default client and its fallback to the tested version', function () {
-    $cdn = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.69.0/dist/browser/standalone.js';
+it('uses the unversioned CDN for the default client and its fallback', function () {
+    $cdn = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference';
     expect(Scalar::cdn())->toBe($cdn);
     config()->set('scalar.cdn', null);
     expect(Scalar::cdn())->toBe($cdn);

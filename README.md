@@ -68,7 +68,7 @@ When more than one is set, `file` takes precedence over `content`, which takes p
 
 ## Scalar client
 
-The default CDN URL pins Scalar 1.69.0. Package releases update this version after testing. Set `cdn` to use another version or a self-hosted standalone bundle.
+The default CDN URL loads the latest Scalar client independently of Composer releases. Set `cdn` to choose a specific version or a self-hosted standalone bundle.
 
 The Laravel theme, application title, proxy URL, and other published defaults stay unchanged. Review `configuration.proxyUrl` if requests should not use Scalar's public proxy.
 

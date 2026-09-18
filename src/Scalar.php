@@ -104,7 +104,7 @@ class Scalar
     {
         $cdn = config('scalar.cdn');
 
-        return is_string($cdn) ? $cdn : 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.69.0/dist/browser/standalone.js';
+        return is_string($cdn) ? $cdn : 'https://cdn.jsdelivr.net/npm/@scalar/api-reference';
     }
 
     public function configurationJson(): string

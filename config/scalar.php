@@ -115,7 +115,7 @@ return [
     | package. You can change this if you want to use a different CDN.
     |
     */
-    'cdn' => 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.69.0/dist/browser/standalone.js',
+    'cdn' => 'https://cdn.jsdelivr.net/npm/@scalar/api-reference',
 
     /*
     |--------------------------------------------------------------------------
