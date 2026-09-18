@@ -418,7 +418,7 @@ it('safely embeds configuration and inline document strings', function () {
 
     $json = Scalar::configurationJson();
     expect($json)->not->toContain('<', '>', '&', "'")
-        ->and($json)->toContain('\\u0022')
+        ->and($json)->toContain('\\u003C', '\\u003E', '\\u0027', '\\u0026', '\\u0022')
         ->and(json_decode($json, true, flags: JSON_THROW_ON_ERROR)['content'])->toBe($payload);
     $this->get('/scalar')->assertOk()->assertDontSee($payload, false)->assertSee($json, false);
 });
