@@ -1,0 +1,30 @@
+name: Dependency audit
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:2.10.3
+      # Library lock files are not committed. Audit a fresh resolution, including
+      # development dependencies, separately from lowest-version compatibility tests.
+      - name: Resolve dependencies
+        run: composer update --prefer-stable --no-install --no-scripts --no-plugins --no-interaction --no-progress --no-audit
+      - name: Audit dependencies
+        run: composer audit --locked --no-interaction
