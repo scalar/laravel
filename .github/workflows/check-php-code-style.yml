@@ -2,6 +2,13 @@ name: Check PHP code style
 
 on:
   pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -9,11 +16,14 @@ permissions:
 jobs:
   style:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: '8.4'
           coverage: none
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-publish
       - run: composer update --prefer-stable --prefer-dist --no-interaction
       - run: vendor/bin/pint --test

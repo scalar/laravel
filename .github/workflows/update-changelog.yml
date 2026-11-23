@@ -21,7 +21,7 @@ jobs:
       - name: Update Changelog
         uses: stefanzweifel/changelog-updater-action@f7c43fed0c8760b25199be6eae5c28fc22830ec6 # v1
         with:
-          latest-version: ${{ github.event.release.name }}
+          latest-version: ${{ github.event.release.tag_name }}
           release-notes: ${{ github.event.release.body }}
 
       - name: Commit updated CHANGELOG

@@ -3,11 +3,12 @@ name: code-quality
 on:
   pull_request:
   push:
-    paths:
-      - '**.php'
-      - 'phpstan.neon'
-      - 'composer.json'
-      - '.github/workflows/code-quality.yml'
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -27,6 +28,9 @@ jobs:
           php-version: 8.4
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, fileinfo
           coverage: pcov
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-publish
 
       - name: Install dependencies
         run: composer update --prefer-stable --prefer-dist --no-interaction

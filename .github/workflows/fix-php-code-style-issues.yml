@@ -2,11 +2,20 @@ name: Fix PHP code style issues
 
 on:
   push:
+    branches: ['**']
     paths:
       - '**.php'
+      - 'composer.json'
+      - 'pint.json'
+      - '.github/workflows/fix-php-code-style-issues.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   php-code-styling:
@@ -17,12 +26,40 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.ref_name }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-publish
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction
 
       - name: Fix PHP code style issues
-        uses: aglipanci/laravel-pint-action@36de00d5f5a8a4e12d443e01671daa12a18f4c79 # 2.6
+        run: composer format
 
       - name: Commit changes
+        id: formatting
         uses: stefanzweifel/git-auto-commit-action@d0b01107b5db882071f96de5dd4b54961ea93f4c # v7
         with:
+          branch: ${{ github.ref_name }}
           commit_message: Fix styling
+          file_pattern: '*.php'
+
+      - name: Check the formatting commit
+        if: steps.formatting.outputs.changes_detected == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORMAT_BRANCH: ${{ github.ref_name }}
+        # GITHUB_TOKEN pushes do not trigger push workflows. Explicit dispatches
+        # ensure that the new commit receives the same checks as the original.
+        run: |
+          gh workflow run run-tests.yml --repo "$GITHUB_REPOSITORY" --ref "$FORMAT_BRANCH"
+          gh workflow run check-php-code-style.yml --repo "$GITHUB_REPOSITORY" --ref "$FORMAT_BRANCH"
+          gh workflow run code-quality.yml --repo "$GITHUB_REPOSITORY" --ref "$FORMAT_BRANCH"
+          gh workflow run check-workflows.yml --repo "$GITHUB_REPOSITORY" --ref "$FORMAT_BRANCH"
