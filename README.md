@@ -148,6 +148,9 @@ Use `composer format` to apply the same Pint rules used by automatic formatting 
 
 Published releases copy their notes into `CHANGELOG.md`, using the release tag as the version.
 
+GitHub Actions dependencies are recorded in `.github/workflows/actions.lock`. After adding or changing an action, run `gh actions-lock` and commit the workflow changes with the generated lockfile. Install the generator with `gh extension install github/gh-actions-lock --pin v0.4.1`; CI runs `gh actions-lock --verify` alongside actionlint. Docker action images retain their digest pins.
+
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
