@@ -11,6 +11,8 @@ Use your OpenAPI documents to render modern API references in Laravel
 
 ## Installation
 
+Requires Laravel 12 or 13 and PHP 8.2 or newer (PHP 8.3 or newer for Laravel 13).
+
 Install the package via Composer:
 
 ```bash

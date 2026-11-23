@@ -2,6 +2,12 @@
 
 All notable changes to `scalar/laravel` will be documented in this file.
 
+## Unreleased
+
+### Breaking changes
+
+* Drop Laravel 11 support after its security support ended. The package now requires Laravel 12 or 13.
+
 ## 0.4.1 - 2026-09-18
 
 ### Fixes
