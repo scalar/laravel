@@ -140,7 +140,13 @@ The gate protects the reference page. A document fetched from a URL needs its ow
 
 ```bash
 composer test
+composer analyse
+vendor/bin/pint --test
 ```
+
+Use `composer format` to apply the same Pint rules used by automatic formatting commits. CI runs on pull requests and pushes to `main`, cancels superseded runs, validates Composer metadata and GitHub Actions workflows, and retains the type-coverage and mutation checks. Formatting commits explicitly request fresh checks.
+
+Published releases copy their notes into `CHANGELOG.md`, using the release tag as the version.
 
 ## Changelog
 
