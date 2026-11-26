@@ -8,6 +8,10 @@ on:
     - cron: '23 8 * * 1'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ (github.event_name == 'pull_request' || github.event_name == 'push') && 'check' || 'update' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+
 permissions:
   contents: read
 
@@ -68,9 +72,6 @@ jobs:
     if: needs.generate.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    concurrency:
-      group: scalar-configuration-update
-      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write
