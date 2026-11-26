@@ -2,13 +2,13 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { apiReferenceConfigurationSchema } from '@scalar/schemas/api-reference';
 
 // A missing result means the schema branch cannot be passed to the browser as JSON.
-function describe(schema) {
+function describe(schema, resolving = new Set()) {
     switch (schema.type) {
         case 'optional':
         case 'evaluate':
-            return describe(schema.schema);
+            return describe(schema.schema, resolving);
         case 'union': {
-            const choices = schema.schemas.map(describe).filter(Boolean);
+            const choices = schema.schemas.map((part) => describe(part, resolving)).filter(Boolean);
             if (choices.length === 0) {
                 return;
             }
@@ -19,14 +19,14 @@ function describe(schema) {
             };
         }
         case 'array': {
-            const items = describe(schema.items);
+            const items = describe(schema.items, resolving);
             if (items) {
                 return { type: `array<${items.type}>`, example: [] };
             }
             return;
         }
         case 'record': {
-            const values = describe(schema.value);
+            const values = describe(schema.value, resolving);
             if (values) {
                 return { type: `object<${values.type}>` };
             }
@@ -34,6 +34,17 @@ function describe(schema) {
         }
         case 'object':
             return { type: 'object' };
+        case 'intersection':
+            if (schema.schemas.every((part) => describe(part, resolving))) {
+                return { type: 'object' };
+            }
+            return;
+        case 'lazy':
+            // A recursive branch can still accept a finite JSON value.
+            if (resolving.has(schema.schema)) {
+                return { type: 'JSON value' };
+            }
+            return describe(schema.schema(), new Set(resolving).add(schema.schema));
         case 'literal':
             if (typeof schema.value !== 'bigint') {
                 return { type: JSON.stringify(schema.value), example: schema.value };
