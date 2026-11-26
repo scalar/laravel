@@ -352,7 +352,7 @@ return [
 
         // Sync navigation with the browser URL. Set to false for embedded references that must
         // leave the host URL and history alone. Defaults to true.
-        // 'urlRouting' => true,
+        // 'urlRouting' => false,
     ],
 
 ];
