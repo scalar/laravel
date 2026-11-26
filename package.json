@@ -1,10 +1,10 @@
 {
-  "name": "scalar-laravel",
-  "private": true,
-  "scripts": {
-    "generate:configuration": "node scripts/generate-configuration.mjs"
-  },
-  "devDependencies": {
-    "@scalar/schemas": "0.20.1"
-  }
+    "name": "scalar-laravel",
+    "private": true,
+    "scripts": {
+        "generate:configuration": "node scripts/generate-configuration.mjs"
+    },
+    "devDependencies": {
+        "@scalar/schemas": "0.20.1"
+    }
 }
