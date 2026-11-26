@@ -82,11 +82,15 @@ it('renders configuration options as JSON', function () {
 
 it('reflects configuration changes in the rendered JSON', function () {
     config()->set('scalar.configuration.showOperationId', true);
+    config()->set('scalar.configuration.expandAllParameters', false);
+    config()->set('scalar.configuration.pluginUrls', ['/plugins/example.mjs']);
 
     $response = $this->get(config('scalar.path'));
 
     $response->assertOk()
-        ->assertSee('"showOperationId":true', false);
+        ->assertSee('"showOperationId":true', false)
+        ->assertSee('"expandAllParameters":false', false)
+        ->assertSee('"pluginUrls":["\/plugins\/example.mjs"]', false);
 });
 
 it('bypasses the authorization gate in the local environment', function () {
