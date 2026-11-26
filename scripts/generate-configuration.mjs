@@ -1,64 +1,79 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { apiReferenceConfigurationSchema } from '@scalar/schemas/api-reference';
+import { applicationTitle, defaults, descriptions, examples } from './configuration-values.mjs';
 
-// A missing result means the schema branch cannot be passed to the browser as JSON.
-function describe(schema, resolving = new Set()) {
+const documentKeys = new Set(['_integration', 'content', 'default', 'file', 'sources', 'spec', 'url']);
+const indent = '    ';
+
+// Undefined means this branch has no PHP example that can be passed as JSON.
+function schemaExample(schema, resolving = new Set()) {
     switch (schema.type) {
         case 'optional':
         case 'evaluate':
-            return describe(schema.schema, resolving);
-        case 'union': {
-            const choices = schema.schemas.map((part) => describe(part, resolving)).filter(Boolean);
-            if (choices.length === 0) {
-                return;
-            }
-
-            return {
-                type: [...new Set(choices.map((choice) => choice.type))].join(' | '),
-                example: choices.find((choice) => choice.example !== undefined)?.example,
-            };
-        }
-        case 'array': {
-            const items = describe(schema.items, resolving);
-            if (items) {
-                return { type: `array<${items.type}>`, example: [] };
+            return schemaExample(schema.schema, resolving);
+        case 'union':
+            for (const part of schema.schemas) {
+                const example = schemaExample(part, resolving);
+                if (example !== undefined) {
+                    return example;
+                }
             }
             return;
-        }
+        case 'array':
+            if (schemaExample(schema.items, resolving) !== undefined) {
+                return [];
+            }
+            return;
         case 'record': {
-            const values = describe(schema.value, resolving);
-            if (values) {
-                return { type: `object<${values.type}>` };
+            const value = schemaExample(schema.value, resolving);
+            if (value !== undefined) {
+                const key = schema.key.type === 'number' ? '1' : 'key';
+                return { [key]: value };
             }
             return;
         }
-        case 'object':
-            return { type: 'object' };
-        case 'intersection':
-            if (schema.schemas.every((part) => describe(part, resolving))) {
-                return { type: 'object' };
+        case 'object': {
+            const entries = [];
+            const optionalEntries = [];
+            for (const [key, field] of Object.entries(schema.properties)) {
+                const example = schemaExample(field, resolving);
+                if (field.type === 'optional') {
+                    if (example !== undefined) {
+                        optionalEntries.push([key, example]);
+                    }
+                } else if (example === undefined) {
+                    return;
+                } else {
+                    entries.push([key, example]);
+                }
+            }
+            return Object.fromEntries(entries.length ? entries : optionalEntries.slice(0, 1));
+        }
+        case 'intersection': {
+            const parts = schema.schemas.map((part) => schemaExample(part, resolving));
+            if (parts.every((part) => part !== null && typeof part === 'object' && !Array.isArray(part))) {
+                return Object.assign({}, ...parts);
             }
             return;
+        }
         case 'lazy':
-            // A recursive branch can still accept a finite JSON value.
-            if (resolving.has(schema.schema)) {
-                return { type: 'JSON value' };
+            // Stop walking recursive types once the same factory appears again.
+            if (!resolving.has(schema.schema)) {
+                return schemaExample(schema.schema(), new Set(resolving).add(schema.schema));
             }
-            return describe(schema.schema(), new Set(resolving).add(schema.schema));
+            return null;
         case 'literal':
-            if (typeof schema.value !== 'bigint') {
-                return { type: JSON.stringify(schema.value), example: schema.value };
-            }
-            return;
-        case 'nullable':
-            return { type: 'null' };
-        case 'number':
-        case 'string':
+            return typeof schema.value === 'bigint' ? undefined : schema.value;
         case 'boolean':
-            return { type: schema.type, example: schema.default };
+            return !(schema.default ?? false);
+        case 'number':
+            return schema.default ?? 0;
+        case 'string':
+            return schema.default ?? '';
+        case 'nullable':
         case 'any':
         case 'unknown':
-            return { type: 'JSON value' };
+            return null;
         case 'function':
         case 'notDefined':
             return;
@@ -77,58 +92,81 @@ function properties(schema) {
     throw new Error(`Expected a Scalar configuration object, got ${schema.type}`);
 }
 
-const documentKeys = new Set(['_integration', 'content', 'default', 'file', 'sources', 'spec', 'url']);
-
-function phpExample(value) {
+function phpValue(value, depth = 0) {
+    if (value === applicationTitle) {
+        return "config('app.name').' API Reference'";
+    }
     if (typeof value === 'string') {
         return "'" + value.replaceAll('\\', '\\\\').replaceAll("'", "\\'") + "'";
     }
-    return JSON.stringify(value);
+    if (value === null || typeof value !== 'object') {
+        return JSON.stringify(value);
+    }
+
+    const isList = Array.isArray(value);
+    const entries = isList
+        ? value.map((item) => phpValue(item, depth + 1))
+        : Object.entries(value).map(([key, item]) => `${phpValue(key)} => ${phpValue(item, depth + 1)}`);
+    if (!entries.length) {
+        return isList ? '[]' : '(object) []';
+    }
+
+    return ['[', ...entries.map((entry) => `${indent.repeat(depth + 1)}${entry},`), `${indent.repeat(depth)}]`].join('\n');
+}
+
+function safeComment(text) {
+    // PHP recognizes its closing tag even in a single-line comment.
+    return text.replaceAll('?>', '? >').replace(/[\r\n\u2028\u2029]/g, ' ');
+}
+
+function wrapDescription(text) {
+    const words = safeComment(text).replace(/`([^`]+)`/g, "'$1'").trim().split(/\s+/);
+    const lines = [];
+    let line = '';
+    for (const word of words) {
+        if (line.length && line.length + word.length + 1 > 84) {
+            lines.push(line);
+            line = '';
+        }
+        line = line ? `${line} ${word}` : word;
+    }
+    return [...lines, line].filter(Boolean);
+}
+
+const optionSchemas = properties(apiReferenceConfigurationSchema);
+const keys = [
+    ...Object.keys(defaults),
+    ...Object.keys(optionSchemas).filter((key) => !documentKeys.has(key) && !Object.hasOwn(defaults, key)).sort(),
+];
+const entries = [];
+
+for (const key of keys) {
+    const schema = optionSchemas[key];
+    const active = Object.hasOwn(defaults, key);
+    const schemaDescription = schema?.typeComment ?? schema?.schema?.typeComment;
+    if (!active && schemaDescription?.includes('@deprecated')) {
+        continue;
+    }
+
+    const value = active ? defaults[key] : schemaExample(schema);
+    if (value === undefined) {
+        continue;
+    }
+
+    const description = descriptions[key] ?? schemaDescription;
+    const notes = description ? wrapDescription(description).map((line) => `// ${line}`) : [];
+    const displayValue = !active && Object.hasOwn(examples, key) ? examples[key] : value;
+    const assignment = `${phpValue(key)} => ${phpValue(displayValue)},`.split('\n');
+    const valueLines = active ? assignment : assignment.map((line) => `// ${safeComment(line)}`);
+    entries.push([...notes, ...valueLines].map((line) => indent.repeat(2) + line).join('\n'));
 }
 
 const configPath = new URL('../config/scalar.php', import.meta.url);
 const config = readFileSync(configPath, 'utf8');
-const begin = '        // BEGIN GENERATED SCALAR OPTIONS';
-const end = '        // END GENERATED SCALAR OPTIONS';
-const start = config.indexOf(begin);
-const finish = config.indexOf(end, start);
-const configurationStart = config.indexOf("    'configuration' => [");
-if (configurationStart < 0 || start < configurationStart || finish < start) {
-    throw new Error('Missing Scalar configuration markers in config/scalar.php.');
+const configurationBlock = /^    'configuration' => \[\r?\n[\s\S]*?^    \],/m;
+if (!configurationBlock.test(config)) {
+    throw new Error('Could not find the configuration array in config/scalar.php.');
 }
-
-const activeKeys = new Set(
-    Array.from(config.slice(configurationStart, start).matchAll(/^ {8}'([^']+)'\s*=>/gm), (match) => match[1]),
-);
-
-const lines = [
-    begin,
-    '        // Generated by npm run generate:configuration.',
-    '        // Configure existing defaults above or uncomment an optional entry below.',
-];
-const optionSchemas = properties(apiReferenceConfigurationSchema);
-for (const key of Object.keys(optionSchemas).sort()) {
-    if (documentKeys.has(key)) {
-        continue;
-    }
-
-    const schema = optionSchemas[key];
-    const details = describe(schema);
-    if (!details) {
-        continue;
-    }
-
-    const description = schema.typeComment ?? schema.schema?.typeComment;
-    const comments = ['', `// ${key} (${details.type})`];
-    if (description) {
-        comments.push(`// ${description.replace(/\s+/g, ' ').trim()}`);
-    }
-    if (!activeKeys.has(key) && details.example !== undefined) {
-        comments.push(`// ${phpExample(key)} => ${phpExample(details.example)},`);
-    }
-    // A PHP closing tag ends a single-line comment even inside a quoted example.
-    lines.push(...comments.map((line) => line ? '        ' + line.replace(/[\r\n\u2028\u2029]/g, ' ').replaceAll('?>', '? >') : ''));
-}
-
-lines.push(end);
-writeFileSync(configPath, config.slice(0, start) + lines.join('\n') + config.slice(finish + end.length));
+const generated = ["    'configuration' => [", entries.join('\n\n'), '    ],'].join('\n');
+const newline = config.includes('\r\n') ? '\r\n' : '\n';
+writeFileSync(configPath, config.replace(configurationBlock, () => generated.replaceAll('\n', newline)));

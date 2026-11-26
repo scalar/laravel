@@ -106,7 +106,9 @@ Registered documents take precedence over the `sources` config. Document inputs 
 
 Use `configuration` for other Scalar options. Configuration is serialized as JSON, so JavaScript callbacks cannot be supplied as PHP closures.
 
-The commented options in `config/scalar.php` are generated from Scalar’s schema. To refresh them in this repository, run `npm ci` and `npm run generate:configuration`. The weekly Scalar configuration workflow opens a PR when a schema update changes the options. Approve the workflows on the generated PR to run its checks.
+The [Scalar configuration reference](https://github.com/scalar/scalar/blob/main/documentation/configuration.md) lists the available types and values.
+
+The entries under `configuration` in `config/scalar.php` are generated from Scalar’s schema and the Laravel defaults in `scripts/configuration-values.mjs`. Run `npm ci` and `npm run generate:configuration` to refresh the published file. The weekly Scalar configuration workflow opens a PR when a schema update changes the options. Approve the workflows on the generated PR to run its checks.
 
 > Under [Laravel Octane](https://laravel.com/docs/octane) the manager is a long-lived singleton, so register documents once (in a service provider). If you register per request, call `Scalar::flush()` first to avoid them stacking up.
 
