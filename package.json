@@ -1,8 +1,9 @@
 {
     "name": "scalar-laravel",
     "private": true,
+    "type": "module",
     "scripts": {
-        "generate:configuration": "node scripts/generate-configuration.mjs"
+        "generate:configuration": "node scripts/generate-configuration.ts"
     },
     "devDependencies": {
         "@scalar/schemas": "0.20.1"

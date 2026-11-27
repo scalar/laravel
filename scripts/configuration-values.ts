@@ -1,7 +1,10 @@
 // Laravel supplies these values when the application has not overridden them.
 export const applicationTitle = Symbol('application title');
 
-export const defaults = {
+export type ConfigurationValue = string | number | boolean | null | typeof applicationTitle
+    | ConfigurationValue[] | { [key: string]: ConfigurationValue };
+
+export const defaults: Record<string, ConfigurationValue> = {
     theme: 'laravel',
     layout: 'modern',
     proxyUrl: 'https://proxy.scalar.com',
@@ -42,7 +45,7 @@ export const defaults = {
 };
 
 // Supply examples for settings whose useful values are specific to the application.
-export const examples = {
+export const examples: Record<string, ConfigurationValue> = {
     agent: { disabled: true },
     authentication: { preferredSecurityScheme: 'bearerAuth' },
     baseServerURL: 'https://api.example.com',
@@ -62,7 +65,7 @@ export const examples = {
     urlRouting: false,
 };
 
-export const laravelNotes = {
+export const laravelNotes: Record<string, string> = {
     pathRouting: 'The package route only matches the base path. Route nested paths to the same Scalar controller.',
     theme: "Use 'laravel' for the theme shipped with this package.",
 };

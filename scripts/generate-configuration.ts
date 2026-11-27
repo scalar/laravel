@@ -1,13 +1,15 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { apiReferenceConfigurationSchema, apiReferenceConfigurationWithSourceSchema } from '@scalar/schemas/api-reference';
-import { applicationTitle, defaults, examples, laravelNotes } from './configuration-values.mjs';
+import type { Schema } from '@scalar/validation';
+import { applicationTitle, defaults, examples, laravelNotes, type ConfigurationValue } from './configuration-values.ts';
 
 const documentKeys = new Set(['_integration', 'content', 'default', 'file', 'sources', 'spec', 'url']);
 const indent = '    ';
 
 // Undefined means this branch has no PHP example that can be passed as JSON.
-function schemaExample(schema, resolving = new Set()) {
-    switch (schema.type) {
+function schemaExample(schema: Schema, resolving = new Set<() => Schema>()): ConfigurationValue | undefined {
+    const { type } = schema;
+    switch (type) {
         case 'optional':
         case 'evaluate':
             return schemaExample(schema.schema, resolving);
@@ -33,8 +35,8 @@ function schemaExample(schema, resolving = new Set()) {
             return;
         }
         case 'object': {
-            const entries = [];
-            const optionalEntries = [];
+            const entries: [string, ConfigurationValue][] = [];
+            const optionalEntries: [string, ConfigurationValue][] = [];
             for (const [key, field] of Object.entries(schema.properties)) {
                 const example = schemaExample(field, resolving);
                 if (field.type === 'optional') {
@@ -78,11 +80,11 @@ function schemaExample(schema, resolving = new Set()) {
         case 'notDefined':
             return;
         default:
-            throw new Error(`Unsupported Scalar schema type: ${schema.type}`);
+            throw new Error(`Unsupported Scalar schema type: ${type}`);
     }
 }
 
-function properties(schema) {
+function properties(schema: Schema): Record<string, Schema> {
     if (schema.type === 'intersection') {
         return Object.assign({}, ...schema.schemas.map(properties));
     }
@@ -93,19 +95,22 @@ function properties(schema) {
 }
 
 // Scalar can supply defaults for omitted object fields. The example's own fields must survive.
-function preservesExample(actual, example) {
+function preservesExample(actual: unknown, example: ConfigurationValue): boolean {
     if (Array.isArray(example)) {
         return Array.isArray(actual) && actual.length === example.length
             && example.every((item, index) => preservesExample(actual[index], item));
     }
     if (example !== null && typeof example === 'object') {
-        return actual !== null && typeof actual === 'object' && !Array.isArray(actual)
-            && Object.entries(example).every(([key, value]) => Object.hasOwn(actual, key) && preservesExample(actual[key], value));
+        if (actual === null || typeof actual !== 'object' || Array.isArray(actual)) {
+            return false;
+        }
+        const fields = actual as Record<string, unknown>;
+        return Object.entries(example).every(([key, value]) => Object.hasOwn(fields, key) && preservesExample(fields[key], value));
     }
     return Object.is(actual, example);
 }
 
-function phpValue(value, depth = 0) {
+function phpValue(value: ConfigurationValue, depth = 0): string {
     if (value === applicationTitle) {
         return "config('app.name').' API Reference'";
     }
@@ -127,12 +132,12 @@ function phpValue(value, depth = 0) {
     return ['[', ...entries.map((entry) => `${indent.repeat(depth + 1)}${entry},`), `${indent.repeat(depth)}]`].join('\n');
 }
 
-function safeComment(text) {
+function safeComment(text: string) {
     // PHP recognizes its closing tag even in a single-line comment.
     return text.replaceAll('?>', '? >').replace(/[\r\n\u2028\u2029]/g, ' ');
 }
 
-function wrapDescription(text) {
+function wrapDescription(text: string) {
     const words = safeComment(text).replace(/`([^`]+)`/g, "'$1'").trim().split(/\s+/);
     const lines = [];
     let line = '';
@@ -156,7 +161,10 @@ const entries = [];
 for (const key of keys) {
     const schema = optionSchemas[key];
     const active = Object.hasOwn(defaults, key);
-    const schemaDescription = schema?.typeComment ?? schema?.schema?.typeComment;
+    const typeComment = schema && 'typeComment' in schema ? schema.typeComment : undefined;
+    const schemaDescription = typeComment ?? (schema?.type === 'optional' || schema?.type === 'evaluate'
+        ? schema.schema.typeComment
+        : undefined);
     if (!active && schemaDescription?.includes('@deprecated')) {
         continue;
     }
@@ -168,11 +176,14 @@ for (const key of keys) {
 
     const hasOverride = !active && Object.hasOwn(examples, key);
     const displayValue = hasOverride ? examples[key] : value;
-    if (hasOverride && !preservesExample(apiReferenceConfigurationWithSourceSchema({ [key]: displayValue })[key], displayValue)) {
-        throw new Error(`Scalar's runtime schema changes the example override for '${key}'. Update scripts/configuration-values.mjs.`);
+    if (hasOverride) {
+        const parsed: Record<string, unknown> = apiReferenceConfigurationWithSourceSchema({ [key]: displayValue });
+        if (!preservesExample(parsed[key], displayValue)) {
+            throw new Error(`Scalar's runtime schema changes the example override for '${key}'. Update scripts/configuration-values.ts.`);
+        }
     }
 
-    const notes = [schemaDescription, laravelNotes[key]].filter(Boolean)
+    const notes = [schemaDescription, laravelNotes[key]].filter((note): note is string => Boolean(note))
         .flatMap(wrapDescription).map((line) => `// ${line}`);
     const assignment = `${phpValue(key)} => ${phpValue(displayValue)},`.split('\n');
     const valueLines = active ? assignment : assignment.map((line) => `// ${safeComment(line)}`);
