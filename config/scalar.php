@@ -127,7 +127,8 @@ return [
     |
     */
     'configuration' => [
-        // Color theme. Use 'laravel' for the theme shipped with this package.
+        // A string to use one of the color presets
+        // Use 'laravel' for the theme shipped with this package.
         'theme' => 'laravel',
 
         // The layout to use for the references
@@ -143,7 +144,8 @@ return [
         // content.
         'hideModels' => false,
 
-        // Download format. Use 'none' to hide the download button.
+        // Sets the file type of the document to download, set to 'none' to hide the download
+        // button
         'documentDownloadType' => 'both',
 
         // Whether to show the "Test Request" button
@@ -155,7 +157,7 @@ return [
         // Whether dark mode is on or off initially (light mode)
         'darkMode' => false,
 
-        // Force the reference to use 'dark' or 'light' mode.
+        // forceDarkModeState makes it always this state no matter what
         'forceDarkModeState' => 'dark',
 
         // Whether to show the dark mode toggle
@@ -164,7 +166,8 @@ return [
         // Key used with CTRL/CMD to open the search modal (defaults to 'k' e.g. CMD+k)
         'searchHotKey' => 'k',
 
-        // Set page metadata, including the browser tab title.
+        // If used, passed data will be added to the HTML header. @see
+        // https://unhead.unjs.io/usage/composables/use-seo-meta
         'metaData' => [
             'title' => config('app.name').' API Reference',
         ],
@@ -172,7 +175,8 @@ return [
         // Path to a favicon image
         'favicon' => '',
 
-        // Hide selected HTTP clients. Use [] to show all clients.
+        // List of httpsnippet clients to hide from the clients menu. By default hides Unirest,
+        // pass '[]' to show all clients
         'hiddenClients' => [],
 
         // Determine the HTTP client that is selected by default
@@ -181,7 +185,7 @@ return [
             'clientKey' => 'curl',
         ],
 
-        // Legacy setting for older client bundles that load web fonts.
+        // Whether to include default fonts
         'withDefaultFonts' => true,
 
         // Whether to expand all tags by default. Warning: this can cause performance issues on
@@ -222,10 +226,10 @@ return [
         // Sort the schema properties by required ones first
         'orderRequiredPropertiesFirst' => true,
 
-        // Use 'alpha' to sort schema properties or 'preserve' for document order.
+        // Order the schema properties by
         'orderSchemaPropertiesBy' => 'alpha',
 
-        // Sort sidebar operations by 'alpha' or 'method'.
+        // Function to sort operations
         'operationsSorter' => 'alpha',
 
         // Whether to persist auth to local storage
@@ -237,26 +241,27 @@ return [
         // Whether and when to show the developer tools.
         'showDeveloperTools' => 'localhost',
 
-        // Configure the Agent Scalar chat.
+        // Agent Scalar configuration
         // 'agent' => [
         //     'disabled' => true,
         // ],
 
-        // Choose a security scheme from your OpenAPI document.
+        // Prefill authentication
         // 'authentication' => [
         //     'preferredSecurityScheme' => 'bearerAuth',
         // ],
 
-        // Resolve relative server URLs against this base URL.
+        // Base URL for the API server
         // 'baseServerURL' => 'https://api.example.com',
 
-        // Add custom styles to the API reference.
+        // Custom CSS to be added to the page
         // 'customCss' => '.scalar-app { --scalar-color-accent: #5b48d6; }',
 
         // Initial view for the request body editor with structured (JSON/YAML) bodies
         // 'defaultRequestBodyView' => 'form',
 
-        // Show parameter details by default. Set to false to start collapsed.
+        // Whether to show parameter details by default. Set to false to collapse each
+        // parameter.
         // 'expandAllParameters' => false,
 
         // External service URLs used by Scalar packages
@@ -300,15 +305,23 @@ return [
         // Default OAuth 2.0 redirect URI used to prefill auth flows in the API client.
         // 'oauth2RedirectUri' => 'https://app.example.com/oauth/callback',
 
-        // Use paths instead of hashes. Your application must route nested URLs to Scalar.
+        // Route using paths instead of hashes, your server MUST support this. @experimental
+        // The package route only matches the base path. Route nested paths to the same Scalar
+        // controller.
         // 'pathRouting' => [
         //     'basePath' => '/scalar',
         // ],
 
-        // Remember the selected code sample client in the browser.
+        // Whether to save and restore the selected code sample client using local storage.
+        // @default true
         // 'persistSelectedClient' => false,
 
-        // Load plugins from browser-accessible JavaScript modules.
+        // URLs of ESM modules that provide additional plugins for the API reference. Each
+        // module is loaded with a dynamic 'import()' before the API reference mounts, and its
+        // default export is registered as a plugin. Unlike 'plugins', this option is
+        // JSON-serializable, so integrations that pass their configuration as JSON can load
+        // plugins without replacing the whole bundle. Only supported by the standalone browser
+        // build ('Scalar.createApiReference').
         // 'pluginUrls' => [
         //     '/plugins/reference.mjs',
         // ],
@@ -343,7 +356,7 @@ return [
         // be used. With multiple 'sources', set this per source.
         // 'slug' => 'my-api',
 
-        // Sort sidebar tags alphabetically.
+        // Function to sort tags
         // 'tagsSorter' => 'alpha',
 
         // The title of the OpenAPI document. Used for the page title and the document name in

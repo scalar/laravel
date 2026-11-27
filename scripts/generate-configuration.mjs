@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { apiReferenceConfigurationSchema } from '@scalar/schemas/api-reference';
-import { applicationTitle, defaults, descriptions, examples } from './configuration-values.mjs';
+import { apiReferenceConfigurationSchema, apiReferenceConfigurationWithSourceSchema } from '@scalar/schemas/api-reference';
+import { applicationTitle, defaults, examples, laravelNotes } from './configuration-values.mjs';
 
 const documentKeys = new Set(['_integration', 'content', 'default', 'file', 'sources', 'spec', 'url']);
 const indent = '    ';
@@ -92,6 +92,19 @@ function properties(schema) {
     throw new Error(`Expected a Scalar configuration object, got ${schema.type}`);
 }
 
+// Scalar can supply defaults for omitted object fields. The example's own fields must survive.
+function preservesExample(actual, example) {
+    if (Array.isArray(example)) {
+        return Array.isArray(actual) && actual.length === example.length
+            && example.every((item, index) => preservesExample(actual[index], item));
+    }
+    if (example !== null && typeof example === 'object') {
+        return actual !== null && typeof actual === 'object' && !Array.isArray(actual)
+            && Object.entries(example).every(([key, value]) => Object.hasOwn(actual, key) && preservesExample(actual[key], value));
+    }
+    return Object.is(actual, example);
+}
+
 function phpValue(value, depth = 0) {
     if (value === applicationTitle) {
         return "config('app.name').' API Reference'";
@@ -153,9 +166,14 @@ for (const key of keys) {
         continue;
     }
 
-    const description = descriptions[key] ?? schemaDescription;
-    const notes = description ? wrapDescription(description).map((line) => `// ${line}`) : [];
-    const displayValue = !active && Object.hasOwn(examples, key) ? examples[key] : value;
+    const hasOverride = !active && Object.hasOwn(examples, key);
+    const displayValue = hasOverride ? examples[key] : value;
+    if (hasOverride && !preservesExample(apiReferenceConfigurationWithSourceSchema({ [key]: displayValue })[key], displayValue)) {
+        throw new Error(`Scalar's runtime schema changes the example override for '${key}'. Update scripts/configuration-values.mjs.`);
+    }
+
+    const notes = [schemaDescription, laravelNotes[key]].filter(Boolean)
+        .flatMap(wrapDescription).map((line) => `// ${line}`);
     const assignment = `${phpValue(key)} => ${phpValue(displayValue)},`.split('\n');
     const valueLines = active ? assignment : assignment.map((line) => `// ${safeComment(line)}`);
     entries.push([...notes, ...valueLines].map((line) => indent.repeat(2) + line).join('\n'));
