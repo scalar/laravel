@@ -76,7 +76,7 @@ The Laravel theme, application title, proxy URL, and other published defaults st
 
 ## Theme
 
-The reference ships with a Laravel-flavored theme, enabled by default (`'theme' => 'laravel'` in the config). Scalar also comes with a range of built-in themes — see the `configuration.theme` option in `config/scalar.php` for the full list.
+The reference ships with a Laravel-flavored theme, enabled by default (`'theme' => 'laravel'` in the config). Scalar also comes with a range of built-in themes — see the [Scalar theme options](https://github.com/scalar/scalar/blob/main/documentation/configuration.md#theme) for the full list.
 
 ## Multiple documents
 
@@ -105,6 +105,10 @@ Scalar::document('API v2')->file(storage_path('app/openapi/v2.json'))->default()
 Registered documents take precedence over the `sources` config. Document inputs belong in the top-level `url`, `content`, `file`, and `sources` settings. These keys are ignored inside `configuration`, so the rendered configuration contains only the selected document input.
 
 Use `configuration` for other Scalar options. Configuration is serialized as JSON, so JavaScript callbacks cannot be supplied as PHP closures.
+
+The [Scalar configuration reference](https://github.com/scalar/scalar/blob/main/documentation/configuration.md) lists the available types and values.
+
+The entries under `configuration` in `config/scalar.php` are generated from Scalar’s schema and the Laravel defaults in `scripts/configuration-values.ts`. Use Node.js 24 to run `npm ci` and `npm run generate:configuration` to refresh the published file. The weekly Scalar configuration workflow opens a PR when a schema update changes the options. Approve the workflows on the generated PR to run its checks.
 
 > Under [Laravel Octane](https://laravel.com/docs/octane) the manager is a long-lived singleton, so register documents once (in a service provider). If you register per request, call `Scalar::flush()` first to avoid them stacking up.
 

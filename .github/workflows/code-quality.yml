@@ -43,3 +43,20 @@ jobs:
 
       - name: Mutation testing
         run: vendor/bin/pest --mutate --parallel --everything --covered-only --min=100
+
+  scalar-configuration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: npm run generate:configuration
+      - name: Verify generated configuration
+        run: |
+          git ls-files --error-unmatch -- config/scalar.php
+          git diff --exit-code -- config/scalar.php

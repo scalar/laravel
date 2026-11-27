@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Auth\GenericUser;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Scalar\Controllers\ScalarController;
@@ -82,11 +83,15 @@ it('renders configuration options as JSON', function () {
 
 it('reflects configuration changes in the rendered JSON', function () {
     config()->set('scalar.configuration.showOperationId', true);
+    config()->set('scalar.configuration.expandAllParameters', false);
+    config()->set('scalar.configuration.pluginUrls', ['/plugins/example.mjs']);
 
     $response = $this->get(config('scalar.path'));
 
     $response->assertOk()
-        ->assertSee('"showOperationId":true', false);
+        ->assertSee('"showOperationId":true', false)
+        ->assertSee('"expandAllParameters":false', false)
+        ->assertSee('"pluginUrls":["\/plugins\/example.mjs"]', false);
 });
 
 it('bypasses the authorization gate in the local environment', function () {
@@ -156,6 +161,36 @@ it('publishes the config file via the install command', function () {
         ->expectsConfirmation('Would you like to star our repo on GitHub?', 'no')
         ->expectsOutputToContain('Point Scalar at your OpenAPI document')
         ->assertExitCode(0);
+});
+
+it('loads and renders enabled examples from the publishable config', function () {
+    $contents = preg_replace_callback(
+        '~^        // \'[^\'\r\n]+\' => [^\r\n]*(?:\R        // [^\r\n]*)*~m',
+        fn (array $example): string => preg_replace('~^        // ~m', '        ', $example[0]),
+        File::get(dirname(__DIR__).'/config/scalar.php'),
+    );
+
+    $temporaryConfig = tempnam(sys_get_temp_dir(), 'scalar-config-');
+    expect($temporaryConfig)->not->toBeFalse();
+    try {
+        File::put($temporaryConfig, $contents);
+        $published = require $temporaryConfig;
+    } finally {
+        File::delete($temporaryConfig);
+    }
+
+    config()->set('scalar', $published);
+    $expected = array_intersect_key($published['configuration'], array_flip(['localization', 'pluginUrls', 'urlRouting']));
+    expect($expected['localization']['locale'] ?? null)->toBeString()
+        ->and($expected['pluginUrls'] ?? null)->toBeArray()
+        ->and(array_is_list($expected['pluginUrls']))->toBeTrue()
+        ->and(array_filter($expected['pluginUrls'], 'is_string'))->toBe($expected['pluginUrls'])
+        ->and($expected['urlRouting'] ?? null)->toBeBool();
+
+    $response = $this->get($published['path'])->assertOk();
+    expect(preg_match('~Scalar\.createApiReference\(\'#app\', (\{.*\})\)~', $response->getContent(), $matches))->toBe(1);
+    $rendered = json_decode($matches[1], true, 512, JSON_THROW_ON_ERROR);
+    expect(array_intersect_key($rendered, $expected))->toBe($expected);
 });
 
 it('embeds raw content and drops the url when content is set', function () {

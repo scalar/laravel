@@ -122,176 +122,250 @@ return [
     | Scalar Configuration
     |--------------------------------------------------------------------------
     |
-    | The configuration options for the Scalar API reference. This array
-    | contains all the settings that control the behavior and appearance
-    | of the API documentation.
+    | Customize the API reference or uncomment an optional setting below.
+    | See the configuration reference in the README for available values.
     |
     */
     'configuration' => [
-        /** A string to use one of the color presets */
-        'theme' =>
-        // 'alternate',
-        // 'bluePlanet',
-        // 'deepSpace',
-        // 'default',
-        // 'kepler',
-        'laravel',
-        // 'mars',
-        // 'moon',
-        // 'purple',
-        // 'saturn',
-        // 'solarized',
-        // 'laserwave',
-        // 'none',
+        // A string to use one of the color presets
+        // Use 'laravel' for the theme shipped with this package.
+        'theme' => 'laravel',
 
-        /** The layout to use for the references */
+        // The layout to use for the references
         'layout' => 'modern',
 
-        /** URL to a request proxy for the API client */
+        // URL to a request proxy for the API client
         'proxyUrl' => 'https://proxy.scalar.com',
 
-        /** Whether to show the sidebar */
+        // Whether to show the sidebar
         'showSidebar' => true,
 
-        /**
-         * Whether to show models in the sidebar, search, and content.
-         */
+        // Hide schema models and reusable AsyncAPI messages from the sidebar, search, and
+        // content.
         'hideModels' => false,
 
-        /**
-         * File type of the “Download OpenAPI Document” button.
-         * One of: 'json', 'yaml', 'both', 'direct', 'none' (set to 'none' to hide it).
-         */
+        // Sets the file type of the document to download, set to 'none' to hide the download
+        // button
         'documentDownloadType' => 'both',
 
-        /**
-         * Whether to show the “Test Request” button
-         */
+        // Whether to show the "Test Request" button
         'hideTestRequestButton' => false,
 
-        /**
-         * Whether to show the sidebar search bar
-         */
+        // Whether to show the sidebar search bar
         'hideSearch' => false,
 
-        /** Whether dark mode is on or off initially (light mode) */
+        // Whether dark mode is on or off initially (light mode)
         'darkMode' => false,
 
-        /** forceDarkModeState makes it always this state no matter what*/
+        // forceDarkModeState makes it always this state no matter what
         'forceDarkModeState' => 'dark',
 
-        /** Whether to show the dark mode toggle */
+        // Whether to show the dark mode toggle
         'hideDarkModeToggle' => false,
 
-        /** Key used with CTRL/CMD to open the search modal (defaults to 'k' e.g. CMD+k) */
+        // Key used with CTRL/CMD to open the search modal (defaults to 'k' e.g. CMD+k)
         'searchHotKey' => 'k',
 
-        /**
-         * If used, passed data will be added to the HTML header
-         *
-         * @see https://unhead.unjs.io/usage/composables/use-seo-meta
-         */
+        // If used, passed data will be added to the HTML header. @see
+        // https://unhead.unjs.io/usage/composables/use-seo-meta
         'metaData' => [
             'title' => config('app.name').' API Reference',
         ],
 
-        /**
-         * Path to a favicon image
-         *
-         * @example '/favicon.svg'
-         */
+        // Path to a favicon image
         'favicon' => '',
 
-        /**
-         * List of httpsnippet clients to hide from the clients menu
-         * By default hides Unirest, pass `[]` to show all clients
-         */
-        'hiddenClients' => [
+        // List of httpsnippet clients to hide from the clients menu. By default hides Unirest,
+        // pass '[]' to show all clients
+        'hiddenClients' => [],
 
-        ],
-
-        /** Determine the HTTP client that’s selected by default */
+        // Determine the HTTP client that is selected by default
         'defaultHttpClient' => [
             'targetKey' => 'shell',
             'clientKey' => 'curl',
         ],
 
-        /** Custom CSS to be added to the page */
-        // 'customCss' => '',
+        // Whether to include default fonts
+        'withDefaultFonts' => true,
 
-        /** Prefill authentication */
-        // 'authentication' => [
-        //     // TODO
+        // Whether to expand all tags by default. Warning: this can cause performance issues on
+        // big documents
+        'defaultOpenAllTags' => false,
+
+        // Whether to expand the first tag in the sidebar when no specific URL target is
+        // present
+        'defaultOpenFirstTag' => true,
+
+        // Whether to show the operationId
+        'showOperationId' => false,
+
+        // Whether to hide the client button
+        'hideClientButton' => false,
+
+        // Whether to expand all models by default. Warning: this can cause performance issues
+        // on big documents
+        'expandAllModelSections' => false,
+
+        // Whether to expand all responses by default. Warning: this can cause performance
+        // issues on big documents
+        'expandAllResponses' => false,
+
+        // Whether to expand all nested schema properties by default. Each row keeps its own
+        // disclosure control, so nested sections can still be collapsed manually. Warning:
+        // this can cause performance issues on big documents
+        'expandAllSchemaProperties' => false,
+
+        // Label for the components.schemas section in the sidebar, content, and search. Use
+        // 'Schemas' for OpenAPI terminology.
+        'modelsSectionLabel' => 'Models',
+
+        // Whether to use the operation summary or the operation path for the sidebar and
+        // search
+        'operationTitleSource' => 'summary',
+
+        // Sort the schema properties by required ones first
+        'orderRequiredPropertiesFirst' => true,
+
+        // Order the schema properties by
+        'orderSchemaPropertiesBy' => 'alpha',
+
+        // Function to sort operations
+        'operationsSorter' => 'alpha',
+
+        // Whether to persist auth to local storage
+        'persistAuth' => false,
+
+        // Enables / disables telemetry
+        'telemetry' => true,
+
+        // Whether and when to show the developer tools.
+        'showDeveloperTools' => 'localhost',
+
+        // Agent Scalar configuration
+        // 'agent' => [
+        //     'disabled' => true,
         // ],
 
-        /**
-         * The baseServerURL is used when the spec servers are relative paths and we are using SSR.
-         * On the client we can grab the window.location.origin but on the server we need
-         * to use this prop.
-         */
-        // 'baseServerURL' => '',
+        // Prefill authentication
+        // 'authentication' => [
+        //     'preferredSecurityScheme' => 'bearerAuth',
+        // ],
 
-        /**
-         * List of servers to override the openapi spec servers
-         */
+        // Base URL for the API server
+        // 'baseServerURL' => 'https://api.example.com',
+
+        // Custom CSS to be added to the page
+        // 'customCss' => '.scalar-app { --scalar-color-accent: #5b48d6; }',
+
+        // Initial view for the request body editor with structured (JSON/YAML) bodies
+        // 'defaultRequestBodyView' => 'form',
+
+        // Whether to show parameter details by default. Set to false to collapse each
+        // parameter.
+        // 'expandAllParameters' => false,
+
+        // External service URLs used by Scalar packages
+        // 'externalUrls' => [
+        //     'proxyUrl' => 'https://proxy.example.com',
+        // ],
+
+        // Clients shown as tabs in the "Client Libraries" block, in order. The rest stay
+        // available in the "More" menu
+        // 'featuredClients' => [
+        //     'node/fetch',
+        // ],
+
+        // Show structural types instead of model names in schema type labels and operation
+        // headings. Model section headings and composition selector labels keep their names.
+        // 'hideModelNames' => true,
+
+        // Allows the user to inject an editor for the spec
+        // 'isEditable' => true,
+
+        // API Reference UI localization. Select a built-in locale, override labels, and
+        // control LTR/RTL rendering.
+        // 'localization' => [
+        //     'locale' => 'de',
+        // ],
+
+        // Maximum initially visible top-level request body properties. Defaults to 12; 0 shows
+        // all without expanding nested properties.
+        // 'maxVisibleRequestBodyProperties' => 0,
+
+        // MCP (Model Context Protocol) configuration. When provided, enables MCP integration
+        // with the given name and url.
+        // 'mcp' => [
+        //     'name' => 'My API',
+        //     'url' => 'https://mcp.example.com',
+        // ],
+
+        // Use indexed dotted names for nested multipart and URL-encoded form fields.
+        // 'multipartNaming' => 'indexed-dot',
+
+        // Default OAuth 2.0 redirect URI used to prefill auth flows in the API client.
+        // 'oauth2RedirectUri' => 'https://app.example.com/oauth/callback',
+
+        // Route using paths instead of hashes, your server MUST support this. @experimental
+        // The package route only matches the base path. Route nested paths to the same Scalar
+        // controller.
+        // 'pathRouting' => [
+        //     'basePath' => '/scalar',
+        // ],
+
+        // Whether to save and restore the selected code sample client using local storage.
+        // @default true
+        // 'persistSelectedClient' => false,
+
+        // URLs of ESM modules that provide additional plugins for the API reference. Each
+        // module is loaded with a dynamic 'import()' before the API reference mounts, and its
+        // default export is registered as a plugin. Unlike 'plugins', this option is
+        // JSON-serializable, so integrations that pass their configuration as JSON can load
+        // plugins without replacing the whole bundle. Only supported by the standalone browser
+        // build ('Scalar.createApiReference').
+        // 'pluginUrls' => [
+        //     '/plugins/reference.mjs',
+        // ],
+
+        // Arrow-key navigation over the schema disclosure toggles (APG tree bindings). Off
+        // until screen-reader interaction questions are settled
+        // 'schemaKeyboardNav' => true,
+
+        // List of OpenAPI server objects
         // 'servers' => [
         //     [
-        //         'url' => 'https://api.scalar.com',
-        //         'description' => 'Production server',
+        //         'url' => 'https://api.example.com',
+        //         'description' => 'Production',
         //     ],
         // ],
 
-        /**
-         * We’re using Inter and JetBrains Mono as the default fonts. If you want to use your own fonts, set this to false.
-         */
-        'withDefaultFonts' => true,
+        // Whether to show the x-badges of operations, webhooks, tags, tag groups and models in
+        // the sidebar
+        // 'showBadgesInSidebar' => true,
 
-        /**
-         * By default we only open the relevant tag based on the url, however if you want all the tags open by default then set this configuration option :)
-         */
-        'defaultOpenAllTags' => false,
+        // Show built-in HTTP clients alongside 'x-scalar-sdk-installation' tabs in the
+        // introduction. Defaults to false
+        // 'showDefaultClientsWithSdkInstallation' => true,
 
-        /** Whether to open the first tag when the url doesn’t point to a specific operation */
-        'defaultOpenFirstTag' => true,
+        // Extension keys to display on operations, parameters, response headers, and schema
+        // fields. Keys must start with x-. Custom plugin components take precedence.
+        // 'showExtensions' => [
+        //     'x-scopes',
+        // ],
 
-        /** Whether to show the operationId next to the operation summary */
-        'showOperationId' => false,
+        // The slug of the OpenAPI document used in the URL. If none is passed, the title will
+        // be used. With multiple 'sources', set this per source.
+        // 'slug' => 'my-api',
 
-        /** Whether to show the “Open API Client” button in the sidebar and modal */
-        'hideClientButton' => false,
+        // Function to sort tags
+        // 'tagsSorter' => 'alpha',
 
-        /** Whether to expand all model sections by default (can be slow on big documents) */
-        'expandAllModelSections' => false,
+        // The title of the OpenAPI document. Used for the page title and the document name in
+        // the dropdown. With multiple 'sources', set this per source.
+        // 'title' => 'My API',
 
-        /** Whether to expand all response sections by default */
-        'expandAllResponses' => false,
-
-        /** Whether to expand all nested schema properties by default (can be slow on big documents) */
-        'expandAllSchemaProperties' => false,
-
-        /** Label used for the models/schemas section. Use 'Schemas' for OpenAPI terminology. */
-        'modelsSectionLabel' => 'Models',
-
-        /** Whether the sidebar and search use the operation 'summary' or 'path' */
-        'operationTitleSource' => 'summary',
-
-        /** Whether required properties are ordered before optional ones in schemas */
-        'orderRequiredPropertiesFirst' => true,
-
-        /** How schema properties are ordered: 'alpha' or 'preserve' */
-        'orderSchemaPropertiesBy' => 'alpha',
-
-        /** How operations are sorted in the sidebar: 'alpha', 'method' */
-        'operationsSorter' => 'alpha',
-
-        /** Whether to persist authentication credentials in the browser’s local storage */
-        'persistAuth' => false,
-
-        /** Whether to send anonymous telemetry (only when the analytics plugin is loaded) */
-        'telemetry' => true,
-
-        /** When to show the developer tools: 'always', 'localhost', 'never' */
-        'showDeveloperTools' => 'localhost',
+        // Sync navigation with the browser URL. Set to false for embedded references that must
+        // leave the host URL and history alone. Defaults to true.
+        // 'urlRouting' => false,
     ],
 
 ];
